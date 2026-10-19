@@ -287,6 +287,7 @@ build/libs/RequestVault.jar
 **Kakaxh1**
 - GitHub Profile: [https://github.com/Kakaxh1](https://github.com/Kakaxh1)
 - Project Repository: [https://github.com/Kakaxh1/RequestVault](https://github.com/Kakaxh1/RequestVault)
+- Website: [https://bhavymorvadiya.netlify.app/](https://bhavymorvadiya.netlify.app/)
 
 If you find RequestVault useful in your penetration testing, bug bounty, or application security workflows, please consider giving the repository a star on GitHub.
 
@@ -295,3 +296,9 @@ If you find RequestVault useful in your penetration testing, bug bounty, or appl
 ## License
 
 This project is licensed under the **MIT License**. Free for commercial and personal penetration testing engagements.
+
+---
+
+<p align="center">
+  Developed by <a href="https://bhavymorvadiya.netlify.app/">bhavymorvadiya.netlify.app</a>
+</p>
