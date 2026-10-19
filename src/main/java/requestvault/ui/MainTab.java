@@ -83,8 +83,11 @@ public class MainTab extends JPanel {
         gbc.gridx = 0; gbc.gridy = 5; gbc.gridwidth = 2;
         JPanel aboutCard = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 8));
         aboutCard.setBorder(BorderFactory.createTitledBorder("About RequestVault"));
-        JLabel websiteLabel = new JLabel("<html><b>Author & Website:</b> <a href='https://bhavymorvadiya.netlify.app/' style='color:#0969da;'>https://bhavymorvadiya.netlify.app/</a></html>");
+        JLabel websitePrefix = new JLabel("Author & Website: ");
+        websitePrefix.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        JLabel websiteLabel = new JLabel("https://bhavymorvadiya.netlify.app/");
         websiteLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        websiteLabel.setForeground(new Color(9, 105, 218));
         websiteLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         websiteLabel.setToolTipText("Open https://bhavymorvadiya.netlify.app/");
         websiteLabel.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -97,6 +100,7 @@ public class MainTab extends JPanel {
                 } catch (Exception ignored) {}
             }
         });
+        aboutCard.add(websitePrefix);
         aboutCard.add(websiteLabel);
         panel.add(aboutCard, gbc);
 

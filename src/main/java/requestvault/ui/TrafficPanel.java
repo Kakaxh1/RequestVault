@@ -397,8 +397,11 @@ public class TrafficPanel extends JPanel {
 
         JPanel footerRight = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 2));
         footerRight.setOpaque(false);
-        JLabel authorLink = new JLabel("<html><a href='https://bhavymorvadiya.netlify.app/' style='text-decoration:none; color:" + (dark ? "#58a6ff" : "#0969da") + ";'>bhavymorvadiya.netlify.app</a></html>");
+        JLabel authorLink = new JLabel("bhavymorvadiya.netlify.app");
         authorLink.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        Color linkColor = dark ? new Color(88, 166, 255) : new Color(9, 105, 218);
+        Color hoverColor = dark ? new Color(140, 195, 255) : new Color(3, 76, 168);
+        authorLink.setForeground(linkColor);
         authorLink.setCursor(new Cursor(Cursor.HAND_CURSOR));
         authorLink.setToolTipText("Open https://bhavymorvadiya.netlify.app/");
         authorLink.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -409,6 +412,14 @@ public class TrafficPanel extends JPanel {
                         Desktop.getDesktop().browse(new java.net.URI("https://bhavymorvadiya.netlify.app/"));
                     }
                 } catch (Exception ignored) {}
+            }
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent e) {
+                authorLink.setForeground(hoverColor);
+            }
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent e) {
+                authorLink.setForeground(linkColor);
             }
         });
         footerRight.add(authorLink);
