@@ -28,7 +28,6 @@
 ## Table of Contents
 
 - [Overview](#overview)
-- [Workbench UI Layout](#workbench-ui-layout)
 - [Key Features](#key-features)
   - [1. Auto-Capture & Historical Sync](#1-auto-capture--historical-sync)
   - [2. Hierarchical Domain & Subdomain Tree](#2-hierarchical-domain--subdomain-tree)
@@ -42,48 +41,8 @@
 - [Sample Output Previews](#sample-output-previews)
 - [Right-Click Context Menus](#right-click-context-menus)
 - [Building from Source](#building-from-source)
-- [Project Architecture](#project-architecture)
 - [Author & Maintainer](#author--maintainer)
 - [License](#license)
-
----
-
-## Workbench UI Layout
-
-RequestVault features a single-screen command center matching standard security analyst workflows:
-
-```
-+------------------------------------+--------------------------------------------------------------------------+
-| DOMAIN / SUBDOMAIN FILTER (Left)   | EXPORT CONTROLS & FILTER BAR (Right)                                     |
-| • Search / filter domains          | • Scope: (•) Req + Resp  ( ) Req only  ( ) Resp only                     |
-| • Checkable domain hierarchy:      |   [ ] In-scope only (Burp Target Scope)                                  |
-|   [x] apple.com                    | • HTTP Methods: [x] GET  [x] POST  [x] PUT  [x] DELETE  [x] PATCH ...    |
-|     ├── [x] captive.apple.com      | • Status: [200, 302, 401-404]  | Content-Type: [json, html]              |
-|     └── [x] metrics.apple.com      | • API / Path Filter: [/api/v1/auth                         ]             |
-|                                    | • Number Range: From [# 10] To [# 35] [Select Range] [Filter] [Reset]    |
-| • Actions:                         | • Body Handling: [x] Exclude static (.png, .js..)  [x] Remove duplicates |
-|   [Select All] [Deselect] [Refresh]| • Action Bar: [Export Evidence] [Copy as... v] [Live Toggle] [Import]   |
-+------------------------------------+--------------------------------------------------------------------------+
-| CENTER WORKSPACE (Tabs)                                                                                       |
-|                                                                                                               |
-| [ Tab 1: Traffic Table & Synchronized Inspector ]                                                             |
-|   ┌────────┬───┬────────┬───────────────────┬──────────────────────┬────────┬──────────────┬────────┬───────┐  |
-|   │ Select │ # │ Method │ Host              │ Path                 │ Status │ Content-Type │ Size   │ Source│  |
-|   ├────────┼───┼────────┼───────────────────┼──────────────────────┼────────┼──────────────┼────────┼───────┤  |
-|   │  [x]   │ 1 │ GET    │ target.example    │ /api/profile         │ 200 OK │ appl./json   │ 1.2 KB │ Proxy │  |
-|   │  [x]   │ 2 │ GET    │ target.example    │ /api/accounts        │ 403    │ appl./json   │ 412 B  │ Proxy │  |
-|   └────────┴───┴────────┴───────────────────┴──────────────────────┴────────┴──────────────┴────────┴───────┘  |
-|   ┌────────────────────────┬─────────────────────────────┬──────────────────────────────────────────────────┐ |
-|   │ [Request Area]         │ [Response Area]             │ [Metadata & SHA-256 Integrity]                   │ |
-|   └────────────────────────┴─────────────────────────────┴──────────────────────────────────────────────────┘ |
-|                                                                                                               |
-| [ Tab 2: Preview (First 5 Matching Entries) ]                                                                 |
-|   Real-time raw flow stream for immediate inspection without opening popups or child windows                  |
-+---------------------------------------------------------------------------------------------------------------+
-| BOTTOM STATISTICS BAR                                                                                         |
-|   Total: 142 | Selected: 12 | Domains: 4 | Methods: GET: 98, POST: 34 | Status: 2xx: 110, 3xx: 12, 4xx: 20   |
-+---------------------------------------------------------------------------------------------------------------+
-```
 
 ---
 
@@ -164,7 +123,7 @@ Compare any two responses (e.g. Authenticated vs Anonymous, Admin vs User, Basel
 
 1. **Locate the JAR file**:
    ```
-   d:\Docs\Bhavya\Burp extention\build\libs\RequestVault.jar
+   build/libs/RequestVault.jar
    ```
 2. **Open Burp Suite**:
    - Navigate to the **Extensions** tab at the top.
@@ -323,58 +282,9 @@ build/libs/RequestVault.jar
 
 ---
 
-## Project Architecture
-
-```
-RequestVault/
-├── build.bat                                 # Windows one-click compile & packaging script
-├── build.gradle                              # Gradle build configuration
-├── lib/
-│   ├── montoya-api-2023.12.1.jar             # Official Burp Suite Montoya API
-│   └── gson-2.10.1.jar                       # Google Gson runtime library
-├── build/libs/
-│   └── RequestVault.jar                      # Standalone fat JAR extension
-└── src/main/java/requestvault/
-    ├── RequestVaultExtension.java            # Montoya entry point & lifecycle hooks
-    ├── capture/
-    │   ├── TrafficCapture.java               # Converts Montoya HTTP messages into TrafficRecords
-    │   ├── LiveProxyCaptureHandler.java      # Intercepts and logs live proxy traffic
-    │   ├── ProxyHistoryImporter.java         # Asynchronously loads existing proxy history
-    │   └── ContextMenuHandler.java           # Burp right-click menu providers
-    ├── model/
-    │   ├── TrafficRecord.java                # Immutable raw bytes model (sequence #, hashes)
-    │   └── Engagement.java                   # Assessment metadata & scoping model
-    ├── storage/
-    │   ├── TrafficStore.java                 # Thread-safe in-memory store & change listeners
-    │   └── EvidenceManifest.java             # Cryptographic SHA-256 evidence pack generator
-    ├── analysis/
-    │   ├── TrafficFilter.java                # Multi-criteria search, domain, range & method engine
-    │   └── ResponseDiff.java                 # Header, status, and body comparison engine
-    ├── security/
-    │   ├── HashService.java                  # Cryptographic SHA-256 byte hashing
-    │   └── RedactionEngine.java              # Non-destructive token & credential masking
-    ├── export/
-    │   ├── TrafficExporter.java              # Common export abstraction
-    │   ├── JsonExporter.java                 # JSON exporter
-    │   ├── RawExporter.java                  # Raw HTTP wire stream exporter
-    │   ├── HarExporter.java                  # HAR 1.2 exporter
-    │   ├── CsvExporter.java                  # Tabular CSV metadata exporter
-    │   ├── HtmlExporter.java                 # Standalone interactive HTML report exporter
-    │   ├── MarkdownExporter.java             # VAPT-ready Markdown report exporter
-    │   └── ClipboardHelper.java              # System clipboard copy utility
-    └── ui/
-        ├── MainTab.java                      # Top-level Burp Suite tab container
-        ├── TrafficPanel.java                 # Command center workbench UI
-        ├── DomainTreePanel.java              # Checkable domain & subdomain hierarchy tree
-        ├── ComparePanel.java                 # Side-by-side response diffing view
-        └── ExportDialog.java                 # Export wizard dialog with progress indicator
-```
-
----
-
 ## Author & Maintainer
 
-**Bhavya ([@Kakaxh1](https://github.com/Kakaxh1))**
+**Kakaxh1**
 - GitHub Profile: [https://github.com/Kakaxh1](https://github.com/Kakaxh1)
 - Project Repository: [https://github.com/Kakaxh1/RequestVault](https://github.com/Kakaxh1/RequestVault)
 
