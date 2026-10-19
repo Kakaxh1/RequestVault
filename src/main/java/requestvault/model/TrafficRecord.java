@@ -141,6 +141,16 @@ public class TrafficRecord {
         return new String(responseBytes, responseBodyOffset, len, StandardCharsets.UTF_8);
     }
 
+    public byte[] getResponseBodyBytes() {
+        if (responseBytes == null || responseBodyOffset < 0 || responseBodyOffset >= responseBytes.length) {
+            return new byte[0];
+        }
+        int len = responseBytes.length - responseBodyOffset;
+        byte[] body = new byte[len];
+        System.arraycopy(responseBytes, responseBodyOffset, body, 0, len);
+        return body;
+    }
+
     public int getRequestSize() {
         return requestBytes != null ? requestBytes.length : 0;
     }
