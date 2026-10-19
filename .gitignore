@@ -1,0 +1,28 @@
+# Build artifacts
+build/
+bin/
+out/
+target/
+*.class
+
+# IDE & Editor files
+.idea/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+.vscode/
+
+# OS files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Temporary files
+*.log
+*.tmp
+sources.txt
+__pycache__/
+*.pyc
