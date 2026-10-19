@@ -371,14 +371,17 @@ public class TrafficPanel extends JPanel {
         add(mainSplit, BorderLayout.CENTER);
 
         // -------------------------------------------------------------
-        // 3. BOTTOM STATUS BAR: STATISTICS
+        // 3. BOTTOM STATUS BAR: STATISTICS & FOOTER
         // -------------------------------------------------------------
-        JPanel bottomStatsBar = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 4));
+        JPanel bottomStatsBar = new JPanel(new BorderLayout());
         bottomStatsBar.setBackground(dark ? new Color(28, 31, 36) : new Color(245, 247, 250));
         bottomStatsBar.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createMatteBorder(1, 0, 0, 0, dark ? new Color(50, 55, 62) : new Color(220, 224, 230)),
                 BorderFactory.createEmptyBorder(2, 8, 2, 8)
         ));
+
+        JPanel statsLeft = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 2));
+        statsLeft.setOpaque(false);
 
         JLabel statsTitle = new JLabel("Statistics");
         statsTitle.setFont(new Font("Segoe UI", Font.BOLD, 12));
@@ -388,9 +391,30 @@ public class TrafficPanel extends JPanel {
         statsLabel.setFont(new Font("Consolas", Font.PLAIN, 12));
         statsLabel.setForeground(dark ? new Color(201, 209, 217) : new Color(74, 85, 104));
 
-        bottomStatsBar.add(statsTitle);
-        bottomStatsBar.add(new JSeparator(SwingConstants.VERTICAL));
-        bottomStatsBar.add(statsLabel);
+        statsLeft.add(statsTitle);
+        statsLeft.add(new JSeparator(SwingConstants.VERTICAL));
+        statsLeft.add(statsLabel);
+
+        JPanel footerRight = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 2));
+        footerRight.setOpaque(false);
+        JLabel authorLink = new JLabel("<html><a href='https://bhavymorvadiya.netlify.app/' style='text-decoration:none; color:" + (dark ? "#58a6ff" : "#0969da") + ";'>bhavymorvadiya.netlify.app</a></html>");
+        authorLink.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        authorLink.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        authorLink.setToolTipText("Open https://bhavymorvadiya.netlify.app/");
+        authorLink.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                try {
+                    if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+                        Desktop.getDesktop().browse(new java.net.URI("https://bhavymorvadiya.netlify.app/"));
+                    }
+                } catch (Exception ignored) {}
+            }
+        });
+        footerRight.add(authorLink);
+
+        bottomStatsBar.add(statsLeft, BorderLayout.WEST);
+        bottomStatsBar.add(footerRight, BorderLayout.EAST);
         add(bottomStatsBar, BorderLayout.SOUTH);
 
         // -------------------------------------------------------------
