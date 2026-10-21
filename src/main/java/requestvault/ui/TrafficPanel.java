@@ -18,6 +18,12 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 
+import requestvault.analysis.TrafficFilter.MimeCategory;
+import requestvault.analysis.TrafficFilter.SearchScope;
+import requestvault.analysis.TrafficFilter.TimeRangeMode;
+import requestvault.export.*;
+import java.text.SimpleDateFormat;
+
 public class TrafficPanel extends JPanel {
 
     private final MontoyaApi api;
@@ -40,16 +46,28 @@ public class TrafficPanel extends JPanel {
     // HTTP Method Checkboxes
     private final Map<String, JCheckBox> methodCheckboxes = new LinkedHashMap<>();
 
-    // Filter Fields
-    private final JTextField statusCodesField;
-    private final JTextField contentTypeField;
-    private final JTextField apiPathField;
+    // Smart Filters & Search Fields
     private final JTextField searchField;
+    private final JComboBox<SearchScope> searchScopeCombo;
+    private final JCheckBox caseSensitiveCheck;
+    private final JCheckBox regexModeCheck;
+    private final JCheckBox invertMatchCheck;
+
+    private final JComboBox<String> statusCategoryCombo;
+    private final JTextField statusCodesField;
+    private final JComboBox<MimeCategory> mimeCategoryCombo;
+    private final JTextField contentTypeField;
+    private final JComboBox<TimeRangeMode> timeRangeCombo;
+    private final JCheckBox authEndpointsCheck;
+    private final JTextField apiPathField;
+
     private final JComboBox<String> selectionFilterCombo;
     private final JTextField fromNumField;
     private final JTextField toNumField;
     private Integer activeRangeFrom = null;
     private Integer activeRangeTo = null;
+
+    private final PresetManager presetManager = new PresetManager();
 
     // Body Handling Checkboxes
     private final JCheckBox excludeStaticCheck;
@@ -129,40 +147,94 @@ public class TrafficPanel extends JPanel {
 
         // Filters Subpanel
         JPanel filtersGrid = new JPanel(new GridBagLayout());
-        filtersGrid.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "Filters"));
+        filtersGrid.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "Filters & Search"));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(2, 4, 2, 4);
 
-        // Row 1: Status codes & Content-Type
+        // --- ROW 0: ADVANCED TRAFFIC SEARCH ---
         gbc.gridx = 0; gbc.gridy = 0; gbc.weightx = 0;
-        filtersGrid.add(new JLabel("Status codes:"), gbc);
+        filtersGrid.add(new JLabel("Search:"), gbc);
+
         gbc.gridx = 1; gbc.weightx = 1.0;
-        statusCodesField = new JTextField(10);
-        filtersGrid.add(statusCodesField, gbc);
-
-        gbc.gridx = 2; gbc.weightx = 0;
-        filtersGrid.add(new JLabel("Content-Type:"), gbc);
-        gbc.gridx = 3; gbc.weightx = 1.0;
-        contentTypeField = new JTextField(12);
-        filtersGrid.add(contentTypeField, gbc);
-
-        // Row 2: API / Path & Global Search
-        gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0;
-        filtersGrid.add(new JLabel("API / Path:"), gbc);
-        gbc.gridx = 1; gbc.weightx = 1.0;
-        apiPathField = new JTextField(10);
-        filtersGrid.add(apiPathField, gbc);
-
-        gbc.gridx = 2; gbc.weightx = 0;
-        filtersGrid.add(new JLabel("Search text:"), gbc);
-        gbc.gridx = 3; gbc.weightx = 1.0;
         searchField = new JTextField(12);
         filtersGrid.add(searchField, gbc);
 
-        // Row 3: Range & Selection Mode
+        gbc.gridx = 2; gbc.weightx = 0;
+        filtersGrid.add(new JLabel("Scope:"), gbc);
+
+        gbc.gridx = 3; gbc.weightx = 1.0;
+        JPanel searchOptionsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 6, 0));
+        searchScopeCombo = new JComboBox<>(SearchScope.values());
+        caseSensitiveCheck = new JCheckBox("Case");
+        caseSensitiveCheck.setToolTipText("Case-sensitive search");
+        regexModeCheck = new JCheckBox("Regex");
+        regexModeCheck.setToolTipText("Regular expression search");
+        invertMatchCheck = new JCheckBox("Invert");
+        invertMatchCheck.setToolTipText("Invert matching results (NOT)");
+        searchOptionsPanel.add(searchScopeCombo);
+        searchOptionsPanel.add(caseSensitiveCheck);
+        searchOptionsPanel.add(regexModeCheck);
+        searchOptionsPanel.add(invertMatchCheck);
+        filtersGrid.add(searchOptionsPanel, gbc);
+
+        // --- ROW 1: SMART STATUS & CONTENT-TYPE (MIME) ---
+        gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0;
+        filtersGrid.add(new JLabel("Status:"), gbc);
+
+        gbc.gridx = 1; gbc.weightx = 1.0;
+        JPanel statusBox = new JPanel(new BorderLayout(4, 0));
+        statusCategoryCombo = new JComboBox<>(new String[]{
+                "All Statuses",
+                "2xx Success",
+                "3xx Redirection",
+                "4xx Client Error",
+                "5xx Server Error",
+                "Auth Failures (401, 403)"
+        });
+        statusCodesField = new JTextField(6);
+        statusCodesField.setToolTipText("Custom status codes/ranges e.g. 200, 302, 401-404, 5xx");
+        statusBox.add(statusCategoryCombo, BorderLayout.CENTER);
+        statusBox.add(statusCodesField, BorderLayout.EAST);
+        filtersGrid.add(statusBox, gbc);
+
+        gbc.gridx = 2; gbc.weightx = 0;
+        filtersGrid.add(new JLabel("MIME Type:"), gbc);
+
+        gbc.gridx = 3; gbc.weightx = 1.0;
+        JPanel mimeBox = new JPanel(new BorderLayout(4, 0));
+        mimeCategoryCombo = new JComboBox<>(MimeCategory.values());
+        contentTypeField = new JTextField(8);
+        contentTypeField.setToolTipText("Custom MIME substring e.g. application/json, text/xml");
+        mimeBox.add(mimeCategoryCombo, BorderLayout.CENTER);
+        mimeBox.add(contentTypeField, BorderLayout.EAST);
+        filtersGrid.add(mimeBox, gbc);
+
+        // --- ROW 2: TIME RANGE & API PATH & AUTH ENDPOINTS ---
         gbc.gridx = 0; gbc.gridy = 2; gbc.weightx = 0;
+        filtersGrid.add(new JLabel("Time:"), gbc);
+
+        gbc.gridx = 1; gbc.weightx = 1.0;
+        timeRangeCombo = new JComboBox<>(TimeRangeMode.values());
+        filtersGrid.add(timeRangeCombo, gbc);
+
+        gbc.gridx = 2; gbc.weightx = 0;
+        filtersGrid.add(new JLabel("Path / Auth:"), gbc);
+
+        gbc.gridx = 3; gbc.weightx = 1.0;
+        JPanel pathAuthBox = new JPanel(new BorderLayout(6, 0));
+        apiPathField = new JTextField(10);
+        apiPathField.setToolTipText("Filter by path prefix or substring e.g. /api/v1");
+        authEndpointsCheck = new JCheckBox("Auth Endpoints Only");
+        authEndpointsCheck.setToolTipText("Match authentication endpoints (/login, /token, /oauth, etc.) or auth headers");
+        pathAuthBox.add(apiPathField, BorderLayout.CENTER);
+        pathAuthBox.add(authEndpointsCheck, BorderLayout.EAST);
+        filtersGrid.add(pathAuthBox, gbc);
+
+        // --- ROW 3: RANGE & SELECTION MODE ---
+        gbc.gridx = 0; gbc.gridy = 3; gbc.weightx = 0;
         filtersGrid.add(new JLabel("Range #:"), gbc);
+
         gbc.gridx = 1; gbc.weightx = 1.0;
         JPanel rangeBox = new JPanel(new FlowLayout(FlowLayout.LEFT, 2, 0));
         fromNumField = new JTextField(4);
@@ -189,6 +261,7 @@ public class TrafficPanel extends JPanel {
 
         gbc.gridx = 2; gbc.weightx = 0;
         filtersGrid.add(new JLabel("Selection:"), gbc);
+
         gbc.gridx = 3; gbc.weightx = 1.0;
         selectionFilterCombo = new JComboBox<>(new String[]{"All Records", "Selected Only", "Unselected Only"});
         selectionFilterCombo.addActionListener(e -> applyFilters());
@@ -214,9 +287,13 @@ public class TrafficPanel extends JPanel {
         // Actions & Copy Toolbar
         JPanel actionsBar = new JPanel(new FlowLayout(FlowLayout.LEFT, 6, 4));
 
-        JButton exportBtn = new JButton("Export Selected...");
+        JButton exportBtn = new JButton("Export Evidence...");
         exportBtn.setFont(exportBtn.getFont().deriveFont(Font.BOLD));
         exportBtn.addActionListener(e -> onExportClicked());
+
+        JButton presetBtn = new JButton("Export Preset ▼");
+        presetBtn.setToolTipText("Quickly export with a built-in or custom preset");
+        presetBtn.addActionListener(e -> showPresetMenu(presetBtn));
 
         JButton copyBtn = new JButton("Copy as... ▼");
         copyBtn.setFont(copyBtn.getFont().deriveFont(Font.BOLD));
@@ -293,6 +370,7 @@ public class TrafficPanel extends JPanel {
         });
 
         actionsBar.add(exportBtn);
+        actionsBar.add(presetBtn);
         actionsBar.add(copyBtn);
         actionsBar.add(new JSeparator(SwingConstants.VERTICAL));
         actionsBar.add(liveCaptureBtn);
@@ -441,6 +519,15 @@ public class TrafficPanel extends JPanel {
         statusCodesField.getDocument().addDocumentListener(docListener);
         contentTypeField.getDocument().addDocumentListener(docListener);
 
+        searchScopeCombo.addActionListener(e -> applyFilters());
+        caseSensitiveCheck.addActionListener(e -> applyFilters());
+        regexModeCheck.addActionListener(e -> applyFilters());
+        invertMatchCheck.addActionListener(e -> applyFilters());
+        statusCategoryCombo.addActionListener(e -> applyFilters());
+        mimeCategoryCombo.addActionListener(e -> applyFilters());
+        timeRangeCombo.addActionListener(e -> applyFilters());
+        authEndpointsCheck.addActionListener(e -> applyFilters());
+
         scopeBothRadio.addActionListener(e -> applyFilters());
         scopeReqOnlyRadio.addActionListener(e -> applyFilters());
         scopeRespOnlyRadio.addActionListener(e -> applyFilters());
@@ -537,10 +624,40 @@ public class TrafficPanel extends JPanel {
 
     private void applyFilters() {
         TrafficFilter filter = new TrafficFilter();
-        filter.setSearchKeyword(searchField.getText());
-        filter.setEndpointPath(apiPathField.getText());
+
+        // 1. Advanced Traffic Search (Deep full-text with scope, regex, case-sensitivity, invert)
+        SearchScope scope = (SearchScope) searchScopeCombo.getSelectedItem();
+        filter.setAdvancedSearch(
+                searchField.getText(),
+                scope != null ? scope : SearchScope.EVERYWHERE,
+                caseSensitiveCheck.isSelected(),
+                regexModeCheck.isSelected(),
+                invertMatchCheck.isSelected()
+        );
+
+        // 2. Smart Filters: Status codes & categories
+        String statusGroup = (String) statusCategoryCombo.getSelectedItem();
+        if (statusGroup != null) {
+            if (statusGroup.startsWith("2xx")) filter.setStatusCodeGroup("2xx");
+            else if (statusGroup.startsWith("3xx")) filter.setStatusCodeGroup("3xx");
+            else if (statusGroup.startsWith("4xx")) filter.setStatusCodeGroup("4xx");
+            else if (statusGroup.startsWith("5xx")) filter.setStatusCodeGroup("5xx");
+            else if (statusGroup.contains("401") || statusGroup.contains("Auth")) filter.setStatusCodeGroup("AUTH_ERRORS");
+            else filter.setStatusCodeGroup("ALL");
+        }
         filter.setStatusCodeCustom(statusCodesField.getText());
-        filter.setContentType(contentTypeField.getText());
+
+        // 3. Smart Filters: MIME type categories & custom
+        MimeCategory mimeCat = (MimeCategory) mimeCategoryCombo.getSelectedItem();
+        filter.setMimeCategory(mimeCat != null ? mimeCat : MimeCategory.ALL);
+        filter.setMimeCustom(contentTypeField.getText());
+
+        // 4. Smart Filters: Time range & Auth endpoints
+        TimeRangeMode timeMode = (TimeRangeMode) timeRangeCombo.getSelectedItem();
+        filter.setTimeRangeMode(timeMode != null ? timeMode : TimeRangeMode.ALL_TIME);
+        filter.setAuthEndpointsOnly(authEndpointsCheck.isSelected());
+
+        filter.setEndpointPath(apiPathField.getText());
         filter.setInScopeOnly(inScopeCheck.isSelected());
         filter.setRange(activeRangeFrom, activeRangeTo);
         filter.setExcludeStaticAssets(excludeStaticCheck.isSelected());
@@ -761,6 +878,33 @@ public class TrafficPanel extends JPanel {
         }
         Frame parentFrame = (Frame) SwingUtilities.getAncestorOfClass(Frame.class, this);
         ExportDialog dialog = new ExportDialog(parentFrame, toExport);
+        dialog.setVisible(true);
+    }
+
+    private void showPresetMenu(Component invoker) {
+        JPopupMenu menu = new JPopupMenu();
+        List<ExportPreset> presets = presetManager.getAllPresets();
+        for (ExportPreset p : presets) {
+            JMenuItem item = new JMenuItem(p.getName());
+            item.setToolTipText(p.getDescription());
+            item.addActionListener(e -> onQuickPresetExport(p));
+            menu.add(item);
+        }
+        menu.addSeparator();
+        JMenuItem customItem = new JMenuItem("Custom Presets & All Options...");
+        customItem.addActionListener(e -> onExportClicked());
+        menu.add(customItem);
+        menu.show(invoker, 0, invoker.getHeight());
+    }
+
+    private void onQuickPresetExport(ExportPreset preset) {
+        List<TrafficRecord> toExport = getSelectedOrDisplayedRecords();
+        if (toExport.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No records to export. Please capture or select traffic first.", "Notice", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        Frame parentFrame = (Frame) SwingUtilities.getAncestorOfClass(Frame.class, this);
+        ExportDialog dialog = new ExportDialog(parentFrame, toExport, preset);
         dialog.setVisible(true);
     }
 

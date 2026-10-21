@@ -32,10 +32,13 @@
   - [1. Auto-Capture & Historical Sync](#1-auto-capture--historical-sync)
   - [2. Hierarchical Domain & Subdomain Tree](#2-hierarchical-domain--subdomain-tree)
   - [3. Granular Selection & Range Filtering](#3-granular-selection--range-filtering)
-  - [4. One-Click Clipboard Copy](#4-one-click-clipboard-copy)
-  - [5. Multi-Format Evidence Packs](#5-multi-format-evidence-packs)
-  - [6. Redaction & Cryptographic Integrity](#6-redaction--cryptographic-integrity)
-  - [7. Side-by-Side Response Diffing](#7-side-by-side-response-diffing)
+  - [4. Smart Filters](#4-smart-filters)
+  - [5. Advanced Traffic Search](#5-advanced-traffic-search)
+  - [6. Export Presets](#6-export-presets)
+  - [7. One-Click Clipboard Copy](#7-one-click-clipboard-copy)
+  - [8. Multi-Format Evidence Packs](#8-multi-format-evidence-packs)
+  - [9. Redaction & Cryptographic Integrity](#9-redaction--cryptographic-integrity)
+  - [10. Side-by-Side Response Diffing](#10-side-by-side-response-diffing)
 - [Installation Guide](#installation-guide)
 - [Step-by-Step Usage Workflows](#step-by-step-usage-workflows)
 - [Sample Output Previews](#sample-output-previews)
@@ -71,7 +74,54 @@
   - Click **`Select Matching`** to check all matching records in one action.
 - **Selection Dropdown**: Toggle view between `Show: All Records`, `Selected Only`, or `Unselected Only`.
 
-### 4. One-Click Clipboard Copy
+### 4. Smart Filters
+Isolate security-critical requests and responses with rapid multi-attribute filtering:
+- **Status Categories & Ranges**: Filter by standard categories (`2xx Success`, `3xx Redirection`, `4xx Client Error`, `5xx Server Error`, `Auth Failures 401/403`) or enter custom ranges (e.g. `200, 302, 401-404, 5xx`).
+- **MIME Type Categories**: Categorize traffic by data type:
+  - `JSON (application/json)`
+  - `HTML (text/html)`
+  - `XML (application/xml, text/xml)`
+  - `Plain Text (text/plain)`
+  - `Scripts & Stylesheets (js, css)`
+  - `Binary & Media (images, pdf, octet-stream)`
+  - Custom MIME substrings (e.g. `application/jwt`).
+- **Time Range Windows**: Instantly filter traffic captured during specific testing windows:
+  - `All Time`, `Last 5 Minutes`, `Last 15 Minutes`, `Last 1 Hour`, `Last 24 Hours`.
+- **Authentication Endpoints Filter**: One-click filter checkbox targeting authentication-critical surfaces:
+  - Path keywords (`/login`, `/token`, `/oauth`, `/auth`, `/session`, `/jwt`, `/saml`, `/register`, `/sso`, `/mfa`).
+  - Session and credential headers (`Authorization`, `Bearer`, `Cookie`, `Set-Cookie`, `x-api-key`).
+
+### 5. Advanced Traffic Search
+Perform deep, full-text forensic inspection across captured traffic:
+- **Search Scopes**:
+  - `Everywhere`: Searches across all metadata, headers, URLs, and bodies.
+  - `URL & Path`: Focuses exclusively on endpoints and query strings.
+  - `Headers (Req + Resp)`: Searches HTTP request and response headers.
+  - `Request Body`: Searches raw request payloads (JSON, form fields, XML).
+  - `Response Body`: Searches server responses, error traces, and reflections.
+  - `Parameters`: Targets query and post parameter names and values.
+  - `Status Code`: Numeric status matching.
+  - `HTTP Method`: Method matching (`GET`, `POST`, `PUT`, `DELETE`, etc.).
+- **Search Modifiers**:
+  - `Match Case`: Strict case-sensitive matching.
+  - `Regex`: Full Java regular expression pattern matching.
+  - `Invert (NOT)`: Reverse matching to filter out known baseline traffic.
+
+### 6. Export Presets
+Save and load reusable configurations across TXT, JSON, CSV, HTML, Markdown, and HAR exports:
+- **Built-in Presets**:
+  - `Full VAPT Evidence Pack (HTML + SHA-256)`: Complete interactive HTML report with credentials redacted and SHA-256 evidence manifest.
+  - `Executive Markdown Dossier (.md)`: Formatted Markdown report with summary tables and code blocks.
+  - `Structured JSON Evidence (.json)`: Comprehensive JSON output with metadata, payloads, timestamps, and hashes.
+  - `Forensic Raw Wire Stream (.txt)`: Exact byte-for-byte wire transactions with delimiters and integrity manifest.
+  - `Tool Interoperability Archive (.har)`: Standard HAR 1.2 archive for Postman, Insomnia, DevTools, or OWASP ZAP.
+  - `Triage Summary Spreadsheet (.csv)`: Tabular metadata summary for project scoping and triage.
+- **Custom Presets**:
+  - Save any combination of format, file-splitting, redaction, and manifest settings with a custom name and description.
+  - Presets persist across Burp Suite restarts via local preferences.
+- **Toolbar Quick-Export**: One-click `Export Preset ▼` dropdown in the action bar to immediately launch export workflows with preferred configurations.
+
+### 7. One-Click Clipboard Copy
 Quickly paste clean evidence into JIRA tickets, Slack, Obsidian, or vulnerability reports:
 - **`Copy as... ▼` Toolbar Dropdown**:
   - **Copy as JSON**: Formatted array with headers, body, timestamp, and hashes.
@@ -81,7 +131,7 @@ Quickly paste clean evidence into JIRA tickets, Slack, Obsidian, or vulnerabilit
 - **Table Right-Click**: Right-click highlighted rows -> `Copy as JSON/CSV/HTML/Markdown`.
 - **Burp Native Menus**: Right-click items in Burp Proxy or Logger -> `RequestVault: One-Click Copy (X)`.
 
-### 5. Multi-Format Evidence Packs
+### 8. Multi-Format Evidence Packs
 Export single files or complete audit directories:
 | Format | Extension | Description |
 | :--- | :--- | :--- |
@@ -92,7 +142,7 @@ Export single files or complete audit directories:
 | **HAR 1.2** | `.har` | Standard HTTP Archive for import into Postman, Insomnia, DevTools, or OWASP ZAP |
 | **Markdown** | `.md` | VAPT-ready audit documentation with summary tables and syntax-highlighted blocks |
 
-### 6. Redaction & Cryptographic Integrity
+### 9. Redaction & Cryptographic Integrity
 - **Non-Destructive Redaction**: Automatically redacts sensitive fields on **exported copies only**; raw in-memory evidence is never altered:
   - Authorization headers (`Bearer <REDACTED>`, `Basic <REDACTED>`)
   - Cookies (`PHPSESSID`, `JSESSIONID`, `token`, `session`)
@@ -102,7 +152,7 @@ Export single files or complete audit directories:
   - Calculates **SHA-256** checksums of all exported files and individual records.
   - Guarantees chain of custody and artifact integrity for client deliverables.
 
-### 7. Side-by-Side Response Diffing
+### 10. Side-by-Side Response Diffing
 Compare any two responses (e.g. Authenticated vs Anonymous, Admin vs User, Baseline vs Tampered):
 - Select 2 rows or click **`Compare (2)`**.
 - Visual indicators for:
@@ -110,6 +160,8 @@ Compare any two responses (e.g. Authenticated vs Anonymous, Admin vs User, Basel
   - Content length / byte size deltas
   - Added, removed, or modified HTTP headers
   - Line-by-line body diff highlighting
+  - JSONPath field-level diffs (`$.user.role: "user" -> "admin"`)
+  - Color-coded signals (Green = Added, Red = Removed, Yellow = Modified)
 
 ---
 

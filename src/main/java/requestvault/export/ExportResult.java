@@ -35,4 +35,26 @@ public class ExportResult {
 
     public File getManifestFile() { return manifestFile; }
     public void setManifestFile(File manifestFile) { this.manifestFile = manifestFile; }
+
+    public boolean isSuccess() {
+        return errors.isEmpty();
+    }
+
+    public int getRecordCount() {
+        return exportedCount;
+    }
+
+    public long getTotalBytes() {
+        long total = 0;
+        for (File f : generatedFiles) {
+            if (f != null && f.exists()) {
+                total += f.length();
+            }
+        }
+        return total;
+    }
+
+    public String getErrorMessage() {
+        return String.join("; ", errors);
+    }
 }
