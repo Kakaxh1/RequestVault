@@ -1,9 +1,13 @@
 @echo off
 setlocal enabledelayedexpansion
 
-echo ===================================================
-echo  RequestVault - Build Script
-echo ===================================================
+echo ================================================================
+echo   RequestVault - HTTP Traffic Collection and Evidence Export
+echo   GitHub:  https://github.com/Kakaxh1/RequestVault
+echo   Author:  Kakaxh1
+echo   Website: https://bhavymorvadiya.netlify.app/
+echo ================================================================
+echo.
 
 if not exist "build\classes" mkdir "build\classes"
 if not exist "build\libs" mkdir "build\libs"
@@ -30,8 +34,14 @@ jar -cfe build\libs\RequestVault.jar requestvault.RequestVaultExtension -C build
 
 if %ERRORLEVEL% EQU 0 (
     echo.
-    echo [SUCCESS] Built: build\libs\RequestVault.jar
-    echo You can now load build\libs\RequestVault.jar directly into Burp Suite!
+    echo ================================================================
+    echo  [SUCCESS] Build Finished Successfully.
+    echo  Artifact: build\libs\RequestVault.jar
+    echo  Project:  https://github.com/Kakaxh1/RequestVault
+    echo  Website:  https://bhavymorvadiya.netlify.app/
+    echo ================================================================
+    echo You can now load build\libs\RequestVault.jar directly into Burp Suite.
 ) else (
+    echo.
     echo [ERROR] Packaging failed.
 )
