@@ -1,4 +1,4 @@
-# RequestVault
+<h1 align="center">RequestVault</h1>
 
 <p align="center">
   <b>A Local-First HTTP Traffic Collection, Analysis, and Evidence-Export Extension for Burp Suite</b>
