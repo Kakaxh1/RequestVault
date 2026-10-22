@@ -175,8 +175,8 @@ Compare any two responses (e.g. Authenticated vs Anonymous, Admin vs User, Basel
 ### Installing the Extension
 
 1. **Obtain the Extension JAR**:
-   - **Direct Download (Recommended)**: Download the latest compiled `RequestVault.jar` from [GitHub Releases](https://github.com/Kakaxh1/RequestVault/releases):
-     - [Download RequestVault.jar (Latest Release)](https://github.com/Kakaxh1/RequestVault/releases)
+   - **Direct Download (Recommended)**: Download the compiled `RequestVault.jar` from [GitHub Releases](https://github.com/Kakaxh1/RequestVault/releases):
+     - [Download RequestVault.jar (v1.0.0)](https://github.com/Kakaxh1/RequestVault/releases/download/v1.0.0/RequestVault.jar)
    - **Or Build Locally**: Follow the [Building from Source](#building-from-source) instructions below; the output is created at `build/libs/RequestVault.jar`.
 2. **Open Burp Suite**:
    - Navigate to the **Extensions** tab at the top.
