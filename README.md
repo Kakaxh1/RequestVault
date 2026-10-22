@@ -7,6 +7,7 @@
 <p align="center">
   <a href="https://github.com/Kakaxh1"><img src="https://img.shields.io/badge/Author-Kakaxh1-181717.svg?style=flat&logo=github" alt="Author" /></a>
   <a href="https://github.com/Kakaxh1/RequestVault"><img src="https://img.shields.io/badge/Repository-Kakaxh1%2FRequestVault-2ea44f.svg?style=flat&logo=github" alt="Repository" /></a>
+  <a href="https://github.com/Kakaxh1/RequestVault/releases"><img src="https://img.shields.io/badge/Release-Download%20JAR-blue.svg?style=flat&logo=github" alt="Download Release" /></a>
   <img src="https://img.shields.io/badge/Burp%20Suite-Community%20%7C%20Pro-orange.svg" alt="Burp Suite" />
   <img src="https://img.shields.io/badge/Montoya%20API-2023.12.1-blue.svg" alt="Montoya API" />
   <img src="https://img.shields.io/badge/Java-17%2B-red.svg" alt="Java 17+" />
@@ -173,10 +174,10 @@ Compare any two responses (e.g. Authenticated vs Anonymous, Admin vs User, Basel
 
 ### Installing the Extension
 
-1. **Locate the JAR file**:
-   ```
-   build/libs/RequestVault.jar
-   ```
+1. **Obtain the Extension JAR**:
+   - **Direct Download (Recommended)**: Download the latest compiled `RequestVault.jar` from [GitHub Releases](https://github.com/Kakaxh1/RequestVault/releases):
+     - [Download RequestVault.jar (Latest Release)](https://github.com/Kakaxh1/RequestVault/releases)
+   - **Or Build Locally**: Follow the [Building from Source](#building-from-source) instructions below; the output is created at `build/libs/RequestVault.jar`.
 2. **Open Burp Suite**:
    - Navigate to the **Extensions** tab at the top.
    - Click on the **Installed** subtab.
