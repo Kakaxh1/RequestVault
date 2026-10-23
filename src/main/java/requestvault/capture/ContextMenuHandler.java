@@ -80,6 +80,49 @@ public class ContextMenuHandler implements ContextMenuItemsProvider {
         copySubmenu.add(copyCsv);
         copySubmenu.add(copyHtml);
         copySubmenu.add(copyMd);
+        copySubmenu.addSeparator();
+
+        JMenuItem copyCurl = new JMenuItem("Copy as cURL");
+        copyCurl.addActionListener(e -> {
+            List<TrafficRecord> records = toRecords(selectedMessages);
+            ClipboardHelper.copyAsCurl(records);
+            JOptionPane.showMessageDialog(null, String.format("Copied %d transaction(s) to clipboard as cURL!", records.size()), "Copied to Clipboard", JOptionPane.INFORMATION_MESSAGE);
+        });
+
+        JMenuItem copyPython = new JMenuItem("Copy as Python (requests)");
+        copyPython.addActionListener(e -> {
+            List<TrafficRecord> records = toRecords(selectedMessages);
+            ClipboardHelper.copyAsPython(records);
+            JOptionPane.showMessageDialog(null, String.format("Copied %d transaction(s) to clipboard as Python Script!", records.size()), "Copied to Clipboard", JOptionPane.INFORMATION_MESSAGE);
+        });
+
+        JMenuItem copyFetch = new JMenuItem("Copy as JavaScript (fetch)");
+        copyFetch.addActionListener(e -> {
+            List<TrafficRecord> records = toRecords(selectedMessages);
+            ClipboardHelper.copyAsFetch(records);
+            JOptionPane.showMessageDialog(null, String.format("Copied %d transaction(s) to clipboard as JavaScript Fetch!", records.size()), "Copied to Clipboard", JOptionPane.INFORMATION_MESSAGE);
+        });
+
+        JMenuItem copyPowerShell = new JMenuItem("Copy as PowerShell");
+        copyPowerShell.addActionListener(e -> {
+            List<TrafficRecord> records = toRecords(selectedMessages);
+            ClipboardHelper.copyAsPowerShell(records);
+            JOptionPane.showMessageDialog(null, String.format("Copied %d transaction(s) to clipboard as PowerShell!", records.size()), "Copied to Clipboard", JOptionPane.INFORMATION_MESSAGE);
+        });
+
+        JMenuItem copyRaw = new JMenuItem("Copy as Raw HTTP (RFC 7230)");
+        copyRaw.addActionListener(e -> {
+            List<TrafficRecord> records = toRecords(selectedMessages);
+            ClipboardHelper.copyAsRawHttp(records);
+            JOptionPane.showMessageDialog(null, String.format("Copied %d transaction(s) to clipboard as Raw HTTP!", records.size()), "Copied to Clipboard", JOptionPane.INFORMATION_MESSAGE);
+        });
+
+        copySubmenu.add(copyCurl);
+        copySubmenu.add(copyPython);
+        copySubmenu.add(copyFetch);
+        copySubmenu.add(copyPowerShell);
+        copySubmenu.add(copyRaw);
+
         menuList.add(copySubmenu);
 
         // Menu 3: Quick Export Selected

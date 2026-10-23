@@ -315,6 +315,28 @@ public class TrafficPanel extends JPanel {
         copyMdItem.addActionListener(e -> copySelected("MARKDOWN"));
         copyMenu.add(copyMdItem);
 
+        copyMenu.addSeparator();
+
+        JMenuItem copyCurlItem = new JMenuItem("Copy as cURL");
+        copyCurlItem.addActionListener(e -> copySelected("CURL"));
+        copyMenu.add(copyCurlItem);
+
+        JMenuItem copyPythonItem = new JMenuItem("Copy as Python (requests)");
+        copyPythonItem.addActionListener(e -> copySelected("PYTHON"));
+        copyMenu.add(copyPythonItem);
+
+        JMenuItem copyFetchItem = new JMenuItem("Copy as JavaScript (fetch)");
+        copyFetchItem.addActionListener(e -> copySelected("FETCH"));
+        copyMenu.add(copyFetchItem);
+
+        JMenuItem copyPowerShellItem = new JMenuItem("Copy as PowerShell");
+        copyPowerShellItem.addActionListener(e -> copySelected("POWERSHELL"));
+        copyMenu.add(copyPowerShellItem);
+
+        JMenuItem copyRawHttpItem = new JMenuItem("Copy as Raw HTTP (RFC 7230)");
+        copyRawHttpItem.addActionListener(e -> copySelected("RAW_HTTP"));
+        copyMenu.add(copyRawHttpItem);
+
         copyBtn.addActionListener(e -> copyMenu.show(copyBtn, 0, copyBtn.getHeight()));
 
         // Live Capture Toggle Button
@@ -420,6 +442,31 @@ public class TrafficPanel extends JPanel {
         tableContextMenu.add(tCopyCsv);
         tableContextMenu.add(tCopyHtml);
         tableContextMenu.add(tCopyMd);
+
+        tableContextMenu.addSeparator();
+
+        JMenu replayMenu = new JMenu("Copy Replay Code");
+        JMenuItem tCopyCurl = new JMenuItem("cURL Command");
+        tCopyCurl.addActionListener(e -> copySelected("CURL"));
+        replayMenu.add(tCopyCurl);
+
+        JMenuItem tCopyPython = new JMenuItem("Python (requests)");
+        tCopyPython.addActionListener(e -> copySelected("PYTHON"));
+        replayMenu.add(tCopyPython);
+
+        JMenuItem tCopyFetch = new JMenuItem("JavaScript (fetch)");
+        tCopyFetch.addActionListener(e -> copySelected("FETCH"));
+        replayMenu.add(tCopyFetch);
+
+        JMenuItem tCopyPowerShell = new JMenuItem("PowerShell");
+        tCopyPowerShell.addActionListener(e -> copySelected("POWERSHELL"));
+        replayMenu.add(tCopyPowerShell);
+
+        JMenuItem tCopyRaw = new JMenuItem("Raw HTTP (RFC 7230)");
+        tCopyRaw.addActionListener(e -> copySelected("RAW_HTTP"));
+        replayMenu.add(tCopyRaw);
+
+        tableContextMenu.add(replayMenu);
         trafficTable.setComponentPopupMenu(tableContextMenu);
 
         JScrollPane tableScroll = new JScrollPane(trafficTable);
@@ -862,6 +909,16 @@ public class TrafficPanel extends JPanel {
             ClipboardHelper.copyAsHtml(targets, true);
         } else if ("MARKDOWN".equalsIgnoreCase(format)) {
             ClipboardHelper.copyAsMarkdown(targets, true);
+        } else if ("CURL".equalsIgnoreCase(format)) {
+            ClipboardHelper.copyAsCurl(targets);
+        } else if ("PYTHON".equalsIgnoreCase(format)) {
+            ClipboardHelper.copyAsPython(targets);
+        } else if ("FETCH".equalsIgnoreCase(format)) {
+            ClipboardHelper.copyAsFetch(targets);
+        } else if ("POWERSHELL".equalsIgnoreCase(format)) {
+            ClipboardHelper.copyAsPowerShell(targets);
+        } else if ("RAW_HTTP".equalsIgnoreCase(format)) {
+            ClipboardHelper.copyAsRawHttp(targets);
         }
 
         JOptionPane.showMessageDialog(this,

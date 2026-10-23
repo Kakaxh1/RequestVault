@@ -40,6 +40,7 @@
   - [8. Multi-Format Evidence Packs](#8-multi-format-evidence-packs)
   - [9. Redaction & Cryptographic Integrity](#9-redaction--cryptographic-integrity)
   - [10. Side-by-Side Response Diffing](#10-side-by-side-response-diffing)
+  - [11. Multi-Language Exploit & Replay Generators](#11-multi-language-exploit--replay-generators)
 - [Installation Guide](#installation-guide)
 - [Step-by-Step Usage Workflows](#step-by-step-usage-workflows)
 - [Sample Output Previews](#sample-output-previews)
@@ -125,12 +126,14 @@ Save and load reusable configurations across TXT, JSON, CSV, HTML, Markdown, and
 ### 7. One-Click Clipboard Copy
 Quickly paste clean evidence into JIRA tickets, Slack, Obsidian, or vulnerability reports:
 - **`Copy as... ▼` Toolbar Dropdown**:
-  - **Copy as JSON**: Formatted array with headers, body, timestamp, and hashes.
-  - **Copy as CSV**: Tabular summary ready for Excel/Sheets.
-  - **Copy as HTML**: Standalone styled report ready for email or documentation.
-  - **Copy as Markdown**: Formatted with HTTP code blocks for bug reports.
-- **Table Right-Click**: Right-click highlighted rows -> `Copy as JSON/CSV/HTML/Markdown`.
-- **Burp Native Menus**: Right-click items in Burp Proxy or Logger -> `RequestVault: One-Click Copy (X)`.
+  - **Copy as JSON / CSV / HTML / Markdown**: Structured forensic evidence.
+  - **Copy as cURL**: Command-line replay command.
+  - **Copy as Python**: Standalone Python `requests` script.
+  - **Copy as JavaScript Fetch**: Async browser/Node.js fetch snippet.
+  - **Copy as PowerShell**: Native `Invoke-RestMethod` script.
+  - **Copy as Raw HTTP**: RFC 7230 wire format.
+- **Table Right-Click**: Right-click highlighted rows -> `Copy as...` or `Copy Replay Code` -> `cURL`, `Python`, `JavaScript Fetch`, `PowerShell`, `Raw HTTP`.
+- **Burp Native Menus**: Right-click items in Burp Proxy, Logger, Repeater, or Target -> `RequestVault: Copy as cURL / Python / Fetch / PowerShell / Raw HTTP`.
 
 ### 8. Multi-Format Evidence Packs
 Export single files or complete audit directories:
@@ -163,6 +166,15 @@ Compare any two responses (e.g. Authenticated vs Anonymous, Admin vs User, Basel
   - Line-by-line body diff highlighting
   - JSONPath field-level diffs (`$.user.role: "user" -> "admin"`)
   - Color-coded signals (Green = Added, Red = Removed, Yellow = Modified)
+
+### 11. Multi-Language Exploit & Replay Generators
+Instantly convert captured HTTP transactions into standalone, copy-pasteable replay scripts and PoCs across 5 major execution formats:
+- **cURL**: Single and multi-step bash commands formatted with HTTP method `-X`, custom headers `-H`, payload `--data-raw`, and `-k` (insecure SSL bypass for self-signed certificates). Special characters and single quotes are safely escaped for bash execution.
+- **Python (`requests`)**: Production-ready Python 3 scripts with `urllib3.disable_warnings()`, `verify=False`, session management (`requests.Session()`) for multi-step stateful workflows, and response status/body inspection.
+- **JavaScript (`fetch`)**: Modern asynchronous Fetch API snippets ready to paste directly into browser DevTools console or execute under Node.js runtime.
+- **PowerShell (`Invoke-RestMethod`)**: Native Windows PowerShell snippets utilizing hashtable headers (`$headers = @{...}`), raw body here-strings, and `-SkipCertificateCheck`.
+- **Raw HTTP (RFC 7230)**: Exact wire-format HTTP request blocks with CRLF delimiters ready for netcat (`nc`), Burp Repeater paste, or raw socket testing.
+- **Multi-Step Flow Chaining**: Highlight multiple requests in sequence; RequestVault stitches them into a coherent sequential execution script with step-by-step progress logging.
 
 ---
 
@@ -303,8 +315,14 @@ RequestVault embeds natively into Burp Suite's right-click menus:
 | **Proxy / Logger** | `RequestVault: One-Click Copy (JSON)` | Immediately copies selected transactions as JSON |
 | **Proxy / Logger** | `RequestVault: One-Click Copy (CSV)` | Immediately copies selected transactions as CSV |
 | **Proxy / Logger** | `RequestVault: One-Click Copy (HTML)` | Immediately copies selected transactions as HTML |
+| **Proxy / Logger / Repeater** | `RequestVault: Copy as cURL` | Generates and copies ready-to-run cURL command |
+| **Proxy / Logger / Repeater** | `RequestVault: Copy as Python` | Generates standalone Python `requests` script |
+| **Proxy / Logger / Repeater** | `RequestVault: Copy as JavaScript Fetch` | Generates modern async `fetch` snippet |
+| **Proxy / Logger / Repeater** | `RequestVault: Copy as PowerShell` | Generates PowerShell `Invoke-RestMethod` script |
+| **Proxy / Logger / Repeater** | `RequestVault: Copy as Raw HTTP` | Generates RFC 7230 raw HTTP request stream |
 | **Proxy / Logger** | `RequestVault: Compare 2 Responses` | Directly launches the diff tab with the 2 highlighted messages |
 | **RequestVault Table** | `Copy as JSON / CSV / HTML / Markdown` | Copies table selection to clipboard in requested format |
+| **RequestVault Table** | `Copy Replay Code` -> `cURL / Python / Fetch / PowerShell / Raw HTTP` | Generates standalone replay script for selected rows |
 
 ---
 

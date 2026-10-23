@@ -91,6 +91,26 @@ public class ClipboardHelper {
         copyToClipboard(md);
     }
 
+    public static void copyAsCurl(List<TrafficRecord> records) {
+        copyToClipboard(ReplayCodeGenerator.toCurl(records));
+    }
+
+    public static void copyAsPython(List<TrafficRecord> records) {
+        copyToClipboard(ReplayCodeGenerator.toPython(records));
+    }
+
+    public static void copyAsFetch(List<TrafficRecord> records) {
+        copyToClipboard(ReplayCodeGenerator.toFetch(records));
+    }
+
+    public static void copyAsPowerShell(List<TrafficRecord> records) {
+        copyToClipboard(ReplayCodeGenerator.toPowerShell(records));
+    }
+
+    public static void copyAsRawHttp(List<TrafficRecord> records) {
+        copyToClipboard(ReplayCodeGenerator.toRawHttp(records));
+    }
+
     private static String escapeCsv(String val) {
         if (val == null) return "\"\"";
         if (val.contains(",") || val.contains("\"") || val.contains("\n") || val.contains("\r")) {
