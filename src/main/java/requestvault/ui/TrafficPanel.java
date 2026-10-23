@@ -429,6 +429,13 @@ public class TrafficPanel extends JPanel {
 
         // Right-click context menu for table
         JPopupMenu tableContextMenu = new JPopupMenu();
+
+        JMenuItem tCopyCurlTop = new JMenuItem("Copy this request as cURL");
+        tCopyCurlTop.addActionListener(e -> copySelected("CURL"));
+        tableContextMenu.add(tCopyCurlTop);
+
+        tableContextMenu.addSeparator();
+
         JMenuItem tCopyJson = new JMenuItem("Copy as JSON");
         tCopyJson.addActionListener(e -> copySelected("JSON"));
         JMenuItem tCopyCsv = new JMenuItem("Copy as CSV");
@@ -474,6 +481,31 @@ public class TrafficPanel extends JPanel {
 
         JTabbedPane inspectorTabs = new JTabbedPane();
         reqArea = createTextArea();
+
+        // Right-click context menu on Request Viewer
+        JPopupMenu reqContextMenu = new JPopupMenu();
+        JMenuItem rCopyCurl = new JMenuItem("Copy this request as cURL");
+        rCopyCurl.addActionListener(e -> copyActiveRequest("CURL"));
+        JMenuItem rCopyPython = new JMenuItem("Copy as Python (requests)");
+        rCopyPython.addActionListener(e -> copyActiveRequest("PYTHON"));
+        JMenuItem rCopyFetch = new JMenuItem("Copy as JavaScript (fetch)");
+        rCopyFetch.addActionListener(e -> copyActiveRequest("FETCH"));
+        JMenuItem rCopyPowerShell = new JMenuItem("Copy as PowerShell");
+        rCopyPowerShell.addActionListener(e -> copyActiveRequest("POWERSHELL"));
+        JMenuItem rCopyRaw = new JMenuItem("Copy as Raw HTTP");
+        rCopyRaw.addActionListener(e -> copyActiveRequest("RAW_HTTP"));
+
+        reqContextMenu.add(rCopyCurl);
+        reqContextMenu.add(rCopyPython);
+        reqContextMenu.add(rCopyFetch);
+        reqContextMenu.add(rCopyPowerShell);
+        reqContextMenu.add(rCopyRaw);
+        reqContextMenu.addSeparator();
+        JMenuItem rSelectAll = new JMenuItem("Select All");
+        rSelectAll.addActionListener(e -> reqArea.selectAll());
+        reqContextMenu.add(rSelectAll);
+        reqArea.setComponentPopupMenu(reqContextMenu);
+
         respArea = createTextArea();
         metadataArea = createTextArea();
         inspectorTabs.addTab("Request", new JScrollPane(reqArea));
@@ -923,6 +955,39 @@ public class TrafficPanel extends JPanel {
 
         JOptionPane.showMessageDialog(this,
                 String.format("Copied %d transaction(s) to clipboard as %s!", targets.size(), format.toUpperCase()),
+                "Copied to Clipboard",
+                JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void copyActiveRequest(String format) {
+        int row = trafficTable.getSelectedRow();
+        if (row < 0) {
+            if (!displayedRecords.isEmpty()) {
+                row = 0;
+            } else {
+                JOptionPane.showMessageDialog(this, "No record currently loaded in the inspector.", "Notice", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+        }
+        int modelIdx = trafficTable.convertRowIndexToModel(row);
+        TrafficRecord record = displayedRecords.get(modelIdx);
+        List<TrafficRecord> list = List.of(record);
+
+        if ("CURL".equalsIgnoreCase(format)) {
+            ClipboardHelper.copyAsCurl(list);
+        } else if ("PYTHON".equalsIgnoreCase(format)) {
+            ClipboardHelper.copyAsPython(list);
+        } else if ("FETCH".equalsIgnoreCase(format)) {
+            ClipboardHelper.copyAsFetch(list);
+        } else if ("POWERSHELL".equalsIgnoreCase(format)) {
+            ClipboardHelper.copyAsPowerShell(list);
+        } else if ("RAW_HTTP".equalsIgnoreCase(format)) {
+            ClipboardHelper.copyAsRawHttp(list);
+        }
+
+        JOptionPane.showMessageDialog(this,
+                String.format("Copied request #%d (%s %s) to clipboard as %s!\n\nReady to paste into terminal / bash.",
+                        record.getSequenceNumber(), record.getMethod(), record.getPath(), format.toUpperCase()),
                 "Copied to Clipboard",
                 JOptionPane.INFORMATION_MESSAGE);
     }

@@ -29,15 +29,90 @@ public class ContextMenuHandler implements ContextMenuItemsProvider {
 
     @Override
     public List<Component> provideMenuItems(ContextMenuEvent event) {
-        List<HttpRequestResponse> selectedMessages = event.selectedRequestResponses();
-        if (selectedMessages == null || selectedMessages.isEmpty()) {
+        List<HttpRequestResponse> selectedMessages = new ArrayList<>();
+        if (event.selectedRequestResponses() != null && !event.selectedRequestResponses().isEmpty()) {
+            selectedMessages.addAll(event.selectedRequestResponses());
+        } else if (event.messageEditorRequestResponse().isPresent()) {
+            HttpRequestResponse editorMsg = event.messageEditorRequestResponse().get().requestResponse();
+            if (editorMsg != null && editorMsg.request() != null) {
+                selectedMessages.add(editorMsg);
+            }
+        }
+
+        if (selectedMessages.isEmpty()) {
             return null;
         }
 
         List<Component> menuList = new ArrayList<>();
+        final int count = selectedMessages.size();
 
-        // Menu 1: Send to RequestVault
-        JMenuItem sendItem = new JMenuItem(String.format("Send to RequestVault (%d)", selectedMessages.size()));
+        // 1. Primary Action: Copy this request as cURL directly at the top level
+        String curlTitle = count == 1 ? "Copy this request as cURL" : String.format("Copy requests as cURL (%d)", count);
+        JMenuItem copyCurlTop = new JMenuItem(curlTitle);
+        copyCurlTop.addActionListener(e -> {
+            List<TrafficRecord> records = toRecords(selectedMessages);
+            ClipboardHelper.copyAsCurl(records);
+            api.logging().logToOutput(String.format("[RequestVault] Copied %d request(s) to clipboard as cURL command.", records.size()));
+            JOptionPane.showMessageDialog(null,
+                    String.format("Copied %d request(s) to clipboard as cURL!\n\nReady to paste into terminal / bash.", records.size()),
+                    "Copied as cURL",
+                    JOptionPane.INFORMATION_MESSAGE);
+        });
+        menuList.add(copyCurlTop);
+
+        // 2. Replay Code Submenu (Python, JS Fetch, PowerShell, Raw HTTP)
+        JMenu replaySubmenu = new JMenu(String.format("Copy Replay Code (%d)", count));
+
+        JMenuItem copyCurlSub = new JMenuItem("cURL Command");
+        copyCurlSub.addActionListener(e -> {
+            List<TrafficRecord> records = toRecords(selectedMessages);
+            ClipboardHelper.copyAsCurl(records);
+            JOptionPane.showMessageDialog(null, String.format("Copied %d request(s) to clipboard as cURL!", records.size()), "Copied to Clipboard", JOptionPane.INFORMATION_MESSAGE);
+        });
+
+        JMenuItem copyPython = new JMenuItem("Python (requests)");
+        copyPython.addActionListener(e -> {
+            List<TrafficRecord> records = toRecords(selectedMessages);
+            ClipboardHelper.copyAsPython(records);
+            api.logging().logToOutput(String.format("[RequestVault] Copied %d request(s) to clipboard as Python script.", records.size()));
+            JOptionPane.showMessageDialog(null, String.format("Copied %d request(s) to clipboard as Python Script!", records.size()), "Copied to Clipboard", JOptionPane.INFORMATION_MESSAGE);
+        });
+
+        JMenuItem copyFetch = new JMenuItem("JavaScript (fetch)");
+        copyFetch.addActionListener(e -> {
+            List<TrafficRecord> records = toRecords(selectedMessages);
+            ClipboardHelper.copyAsFetch(records);
+            api.logging().logToOutput(String.format("[RequestVault] Copied %d request(s) to clipboard as JavaScript Fetch.", records.size()));
+            JOptionPane.showMessageDialog(null, String.format("Copied %d request(s) to clipboard as JavaScript Fetch!", records.size()), "Copied to Clipboard", JOptionPane.INFORMATION_MESSAGE);
+        });
+
+        JMenuItem copyPowerShell = new JMenuItem("PowerShell (Invoke-RestMethod)");
+        copyPowerShell.addActionListener(e -> {
+            List<TrafficRecord> records = toRecords(selectedMessages);
+            ClipboardHelper.copyAsPowerShell(records);
+            api.logging().logToOutput(String.format("[RequestVault] Copied %d request(s) to clipboard as PowerShell.", records.size()));
+            JOptionPane.showMessageDialog(null, String.format("Copied %d request(s) to clipboard as PowerShell!", records.size()), "Copied to Clipboard", JOptionPane.INFORMATION_MESSAGE);
+        });
+
+        JMenuItem copyRaw = new JMenuItem("Raw HTTP (RFC 7230)");
+        copyRaw.addActionListener(e -> {
+            List<TrafficRecord> records = toRecords(selectedMessages);
+            ClipboardHelper.copyAsRawHttp(records);
+            api.logging().logToOutput(String.format("[RequestVault] Copied %d request(s) to clipboard as Raw HTTP.", records.size()));
+            JOptionPane.showMessageDialog(null, String.format("Copied %d request(s) to clipboard as Raw HTTP!", records.size()), "Copied to Clipboard", JOptionPane.INFORMATION_MESSAGE);
+        });
+
+        replaySubmenu.add(copyCurlSub);
+        replaySubmenu.add(copyPython);
+        replaySubmenu.add(copyFetch);
+        replaySubmenu.add(copyPowerShell);
+        replaySubmenu.add(copyRaw);
+        menuList.add(replaySubmenu);
+
+        menuList.add(new JSeparator());
+
+        // 3. Send to RequestVault
+        JMenuItem sendItem = new JMenuItem(String.format("Send to RequestVault (%d)", count));
         sendItem.addActionListener(e -> {
             List<TrafficRecord> records = toRecords(selectedMessages);
             int added = store.addRecords(records, true);
@@ -45,8 +120,8 @@ public class ContextMenuHandler implements ContextMenuItemsProvider {
         });
         menuList.add(sendItem);
 
-        // Menu 2: One-Click Copy submenu
-        JMenu copySubmenu = new JMenu(String.format("RequestVault: One-Click Copy (%d)", selectedMessages.size()));
+        // 4. Evidence Copy Submenu (JSON, CSV, HTML, Markdown)
+        JMenu copySubmenu = new JMenu(String.format("Copy Evidence Formats (%d)", count));
 
         JMenuItem copyJson = new JMenuItem("Copy as JSON");
         copyJson.addActionListener(e -> {
@@ -80,53 +155,10 @@ public class ContextMenuHandler implements ContextMenuItemsProvider {
         copySubmenu.add(copyCsv);
         copySubmenu.add(copyHtml);
         copySubmenu.add(copyMd);
-        copySubmenu.addSeparator();
-
-        JMenuItem copyCurl = new JMenuItem("Copy as cURL");
-        copyCurl.addActionListener(e -> {
-            List<TrafficRecord> records = toRecords(selectedMessages);
-            ClipboardHelper.copyAsCurl(records);
-            JOptionPane.showMessageDialog(null, String.format("Copied %d transaction(s) to clipboard as cURL!", records.size()), "Copied to Clipboard", JOptionPane.INFORMATION_MESSAGE);
-        });
-
-        JMenuItem copyPython = new JMenuItem("Copy as Python (requests)");
-        copyPython.addActionListener(e -> {
-            List<TrafficRecord> records = toRecords(selectedMessages);
-            ClipboardHelper.copyAsPython(records);
-            JOptionPane.showMessageDialog(null, String.format("Copied %d transaction(s) to clipboard as Python Script!", records.size()), "Copied to Clipboard", JOptionPane.INFORMATION_MESSAGE);
-        });
-
-        JMenuItem copyFetch = new JMenuItem("Copy as JavaScript (fetch)");
-        copyFetch.addActionListener(e -> {
-            List<TrafficRecord> records = toRecords(selectedMessages);
-            ClipboardHelper.copyAsFetch(records);
-            JOptionPane.showMessageDialog(null, String.format("Copied %d transaction(s) to clipboard as JavaScript Fetch!", records.size()), "Copied to Clipboard", JOptionPane.INFORMATION_MESSAGE);
-        });
-
-        JMenuItem copyPowerShell = new JMenuItem("Copy as PowerShell");
-        copyPowerShell.addActionListener(e -> {
-            List<TrafficRecord> records = toRecords(selectedMessages);
-            ClipboardHelper.copyAsPowerShell(records);
-            JOptionPane.showMessageDialog(null, String.format("Copied %d transaction(s) to clipboard as PowerShell!", records.size()), "Copied to Clipboard", JOptionPane.INFORMATION_MESSAGE);
-        });
-
-        JMenuItem copyRaw = new JMenuItem("Copy as Raw HTTP (RFC 7230)");
-        copyRaw.addActionListener(e -> {
-            List<TrafficRecord> records = toRecords(selectedMessages);
-            ClipboardHelper.copyAsRawHttp(records);
-            JOptionPane.showMessageDialog(null, String.format("Copied %d transaction(s) to clipboard as Raw HTTP!", records.size()), "Copied to Clipboard", JOptionPane.INFORMATION_MESSAGE);
-        });
-
-        copySubmenu.add(copyCurl);
-        copySubmenu.add(copyPython);
-        copySubmenu.add(copyFetch);
-        copySubmenu.add(copyPowerShell);
-        copySubmenu.add(copyRaw);
-
         menuList.add(copySubmenu);
 
-        // Menu 3: Quick Export Selected
-        JMenuItem exportItem = new JMenuItem(String.format("RequestVault: Export Selected Flow (%d)...", selectedMessages.size()));
+        // 5. Quick Export Selected Flow
+        JMenuItem exportItem = new JMenuItem(String.format("Export Evidence Pack (%d)...", count));
         exportItem.addActionListener(e -> {
             List<TrafficRecord> records = toRecords(selectedMessages);
             ExportDialog dialog = new ExportDialog(null, records);
@@ -134,8 +166,8 @@ public class ContextMenuHandler implements ContextMenuItemsProvider {
         });
         menuList.add(exportItem);
 
-        // Menu 4: Compare if exactly 2 items selected
-        if (selectedMessages.size() == 2) {
+        // 6. Compare if exactly 2 items selected
+        if (count == 2) {
             JMenuItem compareItem = new JMenuItem("RequestVault: Compare 2 Responses Side-by-Side");
             compareItem.addActionListener(e -> {
                 TrafficRecord r1 = TrafficCapture.fromMontoya(selectedMessages.get(0), "CompareA", false);
