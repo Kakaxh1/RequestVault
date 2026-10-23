@@ -54,10 +54,20 @@ public class MainTab extends JPanel {
         panel.add(engagementField, gbc);
 
         gbc.gridx = 0; gbc.gridy = 2; gbc.weightx = 0;
+        gbc.anchor = GridBagConstraints.NORTHWEST;
         panel.add(new JLabel("Storage & Redaction Policy:"), gbc);
         gbc.gridx = 1; gbc.weightx = 1.0;
-        JLabel policyInfo = new JLabel("<html><b>Local-First Immutable Evidence:</b> Original request/response bytes are strictly preserved in raw format.<br/>Sanitization rules are only executed upon export copies, protecting original VAPT reproducibility.</html>");
+        JTextArea policyInfo = new JTextArea("Local-First Immutable Evidence: Original request/response bytes are strictly preserved in raw format.\nSanitization rules are only executed upon export copies, protecting original VAPT reproducibility.");
+        policyInfo.setEditable(false);
+        policyInfo.setOpaque(false);
+        policyInfo.setFocusable(false);
+        policyInfo.setWrapStyleWord(true);
+        policyInfo.setLineWrap(true);
+        policyInfo.setFont(title.getFont().deriveFont(Font.PLAIN, 12f));
+        policyInfo.setForeground(UIManager.getColor("Label.foreground"));
+        policyInfo.setBorder(null);
         panel.add(policyInfo, gbc);
+        gbc.anchor = GridBagConstraints.CENTER;
 
         gbc.gridx = 0; gbc.gridy = 3; gbc.gridwidth = 2;
         JButton saveBtn = new JButton("Update Engagement Name");
