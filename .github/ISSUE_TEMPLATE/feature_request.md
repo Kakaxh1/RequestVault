@@ -7,16 +7,18 @@ assignees: ''
 ---
 
 **Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex: I'm always frustrated when [...] during an API assessment.
+A clear description of the problem or limitation during security assessments.
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen. Include any specific format (e.g. Postman collection, cURL script, custom exporter).
+**Applicable Edition**
+- [ ] Burp Suite Edition
+- [ ] Caido Edition
+- [ ] Both Editions
 
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
+**Describe the solution you would like**
+A clear description of the feature, UI control, or export format you would like added.
+
+**Describe alternatives you have considered**
+Alternative workflows or tools evaluated.
 
 **VAPT / Security Workflow Context**
-Explain how this feature improves penetration testing or bug bounty triage.
-
-**Additional context**
-Add any other context, UI sketches, or examples here.
+Explain how this feature improves penetration testing, bug bounty triage, or audit reporting.

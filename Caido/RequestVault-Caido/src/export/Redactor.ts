@@ -110,3 +110,4 @@ export class Redactor {
     return result;
   }
 }
+

@@ -418,3 +418,4 @@ export class ReplayCodeGenerator {
     return s.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
   }
 }
+

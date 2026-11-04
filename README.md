@@ -1,17 +1,17 @@
 <h1 align="center">RequestVault</h1>
 
 <p align="center">
-  <b>A Local-First HTTP Traffic Collection, Analysis, and Evidence-Export Extension for Burp Suite</b>
+  <b>A Local-First HTTP Traffic Collection, Multi-Language Replay Generator, Response Diffing, and Evidence-Export Extension for Burp Suite & Caido</b>
 </p>
 
 <p align="center">
   <a href="https://github.com/Kakaxh1"><img src="https://img.shields.io/badge/Author-Kakaxh1-181717.svg?style=flat&logo=github" alt="Author" /></a>
   <a href="https://github.com/Kakaxh1/RequestVault"><img src="https://img.shields.io/badge/Repository-Kakaxh1%2FRequestVault-2ea44f.svg?style=flat&logo=github" alt="Repository" /></a>
-  <a href="https://github.com/Kakaxh1/RequestVault/releases"><img src="https://img.shields.io/badge/Release-Download%20JAR-blue.svg?style=flat&logo=github" alt="Download Release" /></a>
+  <a href="https://github.com/Kakaxh1/RequestVault/releases"><img src="https://img.shields.io/badge/Release-v1.0.0-blue.svg?style=flat&logo=github" alt="Download Release" /></a>
   <img src="https://img.shields.io/badge/Burp%20Suite-Community%20%7C%20Pro-orange.svg" alt="Burp Suite" />
-  <img src="https://img.shields.io/badge/Montoya%20API-2023.12.1-blue.svg" alt="Montoya API" />
+  <img src="https://img.shields.io/badge/Caido-Desktop%20%7C%20Web-purple.svg" alt="Caido" />
   <img src="https://img.shields.io/badge/Java-17%2B-red.svg" alt="Java 17+" />
-  <img src="https://img.shields.io/badge/Build-Passing-brightgreen.svg" alt="Build Status" />
+  <img src="https://img.shields.io/badge/TypeScript-5.4%2B-3178c6.svg" alt="TypeScript" />
   <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License" />
 </p>
 
@@ -19,31 +19,67 @@
 
 ## Overview
 
-**RequestVault** is a local-first HTTP traffic collection, analysis, and evidence-export tool built for penetration testers, security engineers, and red teams.
+**RequestVault** is a local-first HTTP traffic collection, analysis, multi-language replay code generator, response diffing, and forensic evidence-export tool built for penetration testers, security engineers, and red teams.
+
+RequestVault is available in two native editions:
+1. **Burp Suite Edition**: Written in Java using the official PortSwigger Montoya API.
+2. **Caido Edition**: Written in TypeScript using the official Caido Plugin SDK.
 
 > **Core Design Principle:**  
-> *Capture traffic once, preserve the original raw evidence, and empower the tester to filter, analyze, compare, and selectively export application flows into audit-ready VAPT artifacts without ever manually reopening hundreds of HTTP history entries.*
+> *Capture traffic once, preserve original raw evidence in memory, and empower the tester to filter, analyze, compare, replay across multiple languages, and selectively export application flows into audit-ready VAPT artifacts without ever manually reopening hundreds of HTTP history entries.*
+
+---
+
+## Direct Release Downloads
+
+Download the ready-to-use binaries from [GitHub Releases](https://github.com/Kakaxh1/RequestVault/releases/tag/v1.0.0):
+
+| Platform | Download Artifact | File Type | Compatibility |
+| :--- | :--- | :--- | :--- |
+| **Burp Suite** | [RequestVault.jar](https://github.com/Kakaxh1/RequestVault/releases/download/v1.0.0/RequestVault.jar) | Java Fat JAR | Burp Suite Community & Pro (2023.12+) |
+| **Caido** | [requestvault-caido.zip](https://github.com/Kakaxh1/RequestVault/releases/download/v1.0.0/requestvault-caido.zip) | Caido Plugin ZIP | Caido Desktop & Web (0.45+) |
+
+---
+
+## Platform Editions Matrix
+
+| Feature | Burp Suite Edition | Caido Edition |
+| :--- | :--- | :--- |
+| **Technology** | Java 17+, Montoya API | TypeScript, Caido Plugin SDK |
+| **Interface** | Swing Native Burp Tab | Caido Navigation Sidebar Page |
+| **Packaging** | Fat JAR (`RequestVault.jar`) | Plugin ZIP (`requestvault-caido.zip`) |
+| **Top-Level "Copy as cURL"** | Yes (Proxy History, Logger, Repeater) | Yes (HTTP History, Intercept, Editor) |
+| **Replay Script Generators** | cURL, Python, Fetch, PowerShell, Raw HTTP | cURL, Python, Fetch, PowerShell, Raw HTTP |
+| **Domain Hierarchy Tree** | Yes (Apex & Subdomain Grouping) | Yes (Apex & Subdomain Grouping) |
+| **Granular Filters** | Status, MIME, Time, Auth Endpoints | Status, MIME, Time, Auth Endpoints |
+| **Forensic Search** | Full-Text, Regex, Inverted Match | Full-Text, Regex, Inverted Match |
+| **Response Diffing** | Split-Pane Access Control Diff | Side-by-Side Diff with Status Alerts |
+| **Multi-Format Exports** | HTML, Markdown, JSON, CSV, RAW, HAR | HTML, Markdown, JSON, CSV, HAR |
+| **Credential Redaction** | Yes (Non-Destructive) | Yes (Non-Destructive) |
+| **SHA-256 Manifest** | `evidence-manifest.json` | `evidence-manifest.json` |
 
 ---
 
 ## Table of Contents
 
 - [Overview](#overview)
+- [Direct Release Downloads](#direct-release-downloads)
+- [Platform Editions Matrix](#platform-editions-matrix)
 - [Key Features](#key-features)
-  - [1. Auto-Capture & Historical Sync](#1-auto-capture--historical-sync)
-  - [2. Hierarchical Domain & Subdomain Tree](#2-hierarchical-domain--subdomain-tree)
-  - [3. Granular Selection & Range Filtering](#3-granular-selection--range-filtering)
-  - [4. Smart Filters](#4-smart-filters)
-  - [5. Advanced Traffic Search](#5-advanced-traffic-search)
-  - [6. Export Presets](#6-export-presets)
-  - [7. One-Click Clipboard Copy](#7-one-click-clipboard-copy)
-  - [8. Multi-Format Evidence Packs](#8-multi-format-evidence-packs)
-  - [9. Redaction & Cryptographic Integrity](#9-redaction--cryptographic-integrity)
-  - [10. Side-by-Side Response Diffing](#10-side-by-side-response-diffing)
-  - [11. Multi-Language Exploit & Replay Generators](#11-multi-language-exploit--replay-generators)
+  - [1. Multi-Language Exploit & Replay Generators](#1-multi-language-exploit--replay-generators)
+  - [2. Top-Level Context Menu Shortcuts](#2-top-level-context-menu-shortcuts)
+  - [3. Auto-Capture & Historical Ingestion](#3-auto-capture--historical-ingestion)
+  - [4. Hierarchical Domain & Subdomain Tree](#4-hierarchical-domain--subdomain-tree)
+  - [5. Granular Selection & Range Filtering](#5-granular-selection--range-filtering)
+  - [6. Smart Filters](#6-smart-filters)
+  - [7. Advanced Traffic Search](#7-advanced-traffic-search)
+  - [8. Side-by-Side Response Diffing](#8-side-by-side-response-diffing)
+  - [9. Multi-Format Evidence Packs](#9-multi-format-evidence-packs)
+  - [10. Non-Destructive Redaction & Cryptographic Integrity](#10-non-destructive-redaction--cryptographic-integrity)
 - [Installation Guide](#installation-guide)
+  - [Installing in Burp Suite](#installing-in-burp-suite)
+  - [Installing in Caido](#installing-in-caido)
 - [Step-by-Step Usage Workflows](#step-by-step-usage-workflows)
-- [Sample Output Previews](#sample-output-previews)
 - [Right-Click Context Menus](#right-click-context-menus)
 - [Building from Source](#building-from-source)
 - [Author & Maintainer](#author--maintainer)
@@ -53,30 +89,40 @@
 
 ## Key Features
 
-### 1. Auto-Capture & Historical Sync
-- **Automatic History Ingestion**: Reads existing Burp Proxy HTTP history on startup in a background worker without freezing Burp.
+### 1. Multi-Language Exploit & Replay Generators
+Convert captured transactions into standalone, copy-pasteable replay scripts across 5 major execution formats:
+- **cURL**: Single and multi-step bash commands formatted with HTTP method `-X`, custom headers `-H`, payload `--data-raw`, and `-k` (insecure SSL bypass for self-signed certificates). Special characters and single quotes are safely escaped for bash execution.
+- **Python (`requests`)**: Production-ready Python 3 scripts with `urllib3.disable_warnings()`, `verify=False`, session management (`requests.Session()`) for multi-step stateful workflows, and response status/body inspection.
+- **JavaScript (`fetch`)**: Modern asynchronous Fetch API snippets ready to paste directly into browser DevTools console or execute under Node.js runtime.
+- **PowerShell (`Invoke-RestMethod`)**: Native Windows PowerShell snippets utilizing hashtable headers (`$headers = @{...}`), raw body here-strings, and `-SkipCertificateCheck`.
+- **Raw HTTP (RFC 7230)**: Exact wire-format HTTP request blocks with CRLF delimiters ready for netcat (`nc`), Burp Repeater, or raw socket testing.
+- **Multi-Step Flow Chaining**: Highlight multiple requests in sequence; RequestVault stitches them into a coherent sequential execution script with step-by-step progress logging.
+
+### 2. Top-Level Context Menu Shortcuts
+Quickly copy replay commands without opening submenus:
+- **Proxy HTTP History / Tables**: Right-click any row -> **"Copy this request as cURL"**.
+- **Request Editors**: Right-click directly inside the request text editor -> **"Copy this request as cURL"**.
+- Also includes quick actions for Python, JavaScript Fetch, PowerShell, Raw HTTP, and sending traffic into RequestVault.
+
+### 3. Auto-Capture & Historical Ingestion
+- **Automatic History Ingestion**: Reads existing Burp or Caido proxy history in background workers without freezing the UI.
 - **Live Interceptor**: Captures and pairs real-time requests and responses as traffic passes through the proxy.
-- **Live Toggle**: Enable or disable real-time capture anytime (`Live Capture ON/OFF`) directly from the action bar.
-- **Burp Ecosystem Integration**: Send traffic directly to RequestVault from **Proxy HTTP History**, **Logger**, **Target Site Map**, or **Repeater**.
+- **Scope Awareness**: Filter capture strictly to in-scope targets or capture across all hostnames.
 
-### 2. Hierarchical Domain & Subdomain Tree
-- **Tree Visualization**: Automatically groups hostnames by their apex domain (e.g. `example.com` -> `api.example.com`, `auth.example.com`).
-- **Interactive Checkboxes**: Filter all table entries by checking or unchecking parent domains or individual subdomains.
-- **Search Bar**: Quick-filter domain names as your engagement grows.
-- **Bulk Controls**: One-click **Select All**, **Deselect All**, and **Refresh** buttons.
+### 4. Hierarchical Domain & Subdomain Tree
+- Automatically groups hostnames by their apex domain (e.g. `example.com` -> `api.example.com`, `auth.example.com`).
+- Check or uncheck parent domains or individual subdomains to filter table views instantaneously.
+- Search input to filter domains as your engagement scope expands.
 
-### 3. Granular Selection & Range Filtering
+### 5. Granular Selection & Range Filtering
 - **1st-Column Checkboxes (`Select`)**: Check or uncheck individual transactions directly in the table.
 - **Sequence Numbers (`#`)**: Every request/response transaction receives an immutable chronological sequence number (`#1`, `#2`, `#3`...).
 - **Number Range Selection**:
   - `From: [10]` `To: [50]` -> Click **`Select Range`** to check those transactions.
   - Click **`Filter Range`** to isolate those numbers in the view.
-- **API / Path Filter**:
-  - Enter keywords or API prefixes (e.g. `/api/v1/auth`, `users`).
-  - Click **`Select Matching`** to check all matching records in one action.
-- **Selection Dropdown**: Toggle view between `Show: All Records`, `Selected Only`, or `Unselected Only`.
+- **API / Path Filter**: Enter keywords or API prefixes (e.g. `/api/v1/auth`, `users`) and click **`Select Matching`**.
 
-### 4. Smart Filters
+### 6. Smart Filters
 Isolate security-critical requests and responses with rapid multi-attribute filtering:
 - **Status Categories & Ranges**: Filter by standard categories (`2xx Success`, `3xx Redirection`, `4xx Client Error`, `5xx Server Error`, `Auth Failures 401/403`) or enter custom ranges (e.g. `200, 302, 401-404, 5xx`).
 - **MIME Type Categories**: Categorize traffic by data type:
@@ -86,67 +132,39 @@ Isolate security-critical requests and responses with rapid multi-attribute filt
   - `Plain Text (text/plain)`
   - `Scripts & Stylesheets (js, css)`
   - `Binary & Media (images, pdf, octet-stream)`
-  - Custom MIME substrings (e.g. `application/jwt`).
 - **Time Range Windows**: Instantly filter traffic captured during specific testing windows:
   - `All Time`, `Last 5 Minutes`, `Last 15 Minutes`, `Last 1 Hour`, `Last 24 Hours`.
 - **Authentication Endpoints Filter**: One-click filter checkbox targeting authentication-critical surfaces:
   - Path keywords (`/login`, `/token`, `/oauth`, `/auth`, `/session`, `/jwt`, `/saml`, `/register`, `/sso`, `/mfa`).
   - Session and credential headers (`Authorization`, `Bearer`, `Cookie`, `Set-Cookie`, `x-api-key`).
 
-### 5. Advanced Traffic Search
+### 7. Advanced Traffic Search
 Perform deep, full-text forensic inspection across captured traffic:
-- **Search Scopes**:
-  - `Everywhere`: Searches across all metadata, headers, URLs, and bodies.
-  - `URL & Path`: Focuses exclusively on endpoints and query strings.
-  - `Headers (Req + Resp)`: Searches HTTP request and response headers.
-  - `Request Body`: Searches raw request payloads (JSON, form fields, XML).
-  - `Response Body`: Searches server responses, error traces, and reflections.
-  - `Parameters`: Targets query and post parameter names and values.
-  - `Status Code`: Numeric status matching.
-  - `HTTP Method`: Method matching (`GET`, `POST`, `PUT`, `DELETE`, etc.).
-- **Search Modifiers**:
-  - `Match Case`: Strict case-sensitive matching.
-  - `Regex`: Full Java regular expression pattern matching.
-  - `Invert (NOT)`: Reverse matching to filter out known baseline traffic.
+- **Search Scopes**: `Everywhere`, `URL & Path`, `Headers`, `Request Body`, `Response Body`, `Method`, and `Status`.
+- **Search Modifiers**: `Match Case`, `Regex` pattern matching, and `Invert (NOT)` reverse matching.
 
-### 6. Export Presets
-Save and load reusable configurations across TXT, JSON, CSV, HTML, Markdown, and HAR exports:
-- **Built-in Presets**:
-  - `Full VAPT Evidence Pack (HTML + SHA-256)`: Complete interactive HTML report with credentials redacted and SHA-256 evidence manifest.
-  - `Executive Markdown Dossier (.md)`: Formatted Markdown report with summary tables and code blocks.
-  - `Structured JSON Evidence (.json)`: Comprehensive JSON output with metadata, payloads, timestamps, and hashes.
-  - `Forensic Raw Wire Stream (.txt)`: Exact byte-for-byte wire transactions with delimiters and integrity manifest.
-  - `Tool Interoperability Archive (.har)`: Standard HAR 1.2 archive for Postman, Insomnia, DevTools, or OWASP ZAP.
-  - `Triage Summary Spreadsheet (.csv)`: Tabular metadata summary for project scoping and triage.
-- **Custom Presets**:
-  - Save any combination of format, file-splitting, redaction, and manifest settings with a custom name and description.
-  - Presets persist across Burp Suite restarts via local preferences.
-- **Toolbar Quick-Export**: One-click `Export Preset ▼` dropdown in the action bar to immediately launch export workflows with preferred configurations.
+### 8. Side-by-Side Response Diffing
+Compare any two responses (e.g. Authenticated vs Anonymous, Admin vs User, Baseline vs Tampered):
+- Select 2 rows and click **`Compare (2)`**.
+- Visual indicators for:
+  - Status code mismatches (`200 OK` vs `403 Forbidden`) with access control alert banners.
+  - Content length / byte size deltas.
+  - Added, removed, or modified HTTP headers.
+  - Line-by-line body diff highlighting.
+  - JSONPath field-level diffs (`$.user.role: "user" -> "admin"`).
 
-### 7. One-Click Clipboard Copy
-Quickly paste clean evidence into JIRA tickets, Slack, Obsidian, or vulnerability reports:
-- **`Copy as... ▼` Toolbar Dropdown**:
-  - **Copy as JSON / CSV / HTML / Markdown**: Structured forensic evidence.
-  - **Copy as cURL**: Command-line replay command.
-  - **Copy as Python**: Standalone Python `requests` script.
-  - **Copy as JavaScript Fetch**: Async browser/Node.js fetch snippet.
-  - **Copy as PowerShell**: Native `Invoke-RestMethod` script.
-  - **Copy as Raw HTTP**: RFC 7230 wire format.
-- **Table Right-Click**: Right-click highlighted rows -> `Copy as...` or `Copy Replay Code` -> `cURL`, `Python`, `JavaScript Fetch`, `PowerShell`, `Raw HTTP`.
-- **Burp Native Menus**: Right-click items in Burp Proxy, Logger, Repeater, or Target -> `RequestVault: Copy as cURL / Python / Fetch / PowerShell / Raw HTTP`.
-
-### 8. Multi-Format Evidence Packs
+### 9. Multi-Format Evidence Packs
 Export single files or complete audit directories:
 | Format | Extension | Description |
 | :--- | :--- | :--- |
+| **HTML Report** | `.html` | Clean, self-contained interactive report with badges and expandable bodies |
+| **Markdown** | `.md` | VAPT-ready audit documentation with summary tables and syntax-highlighted blocks |
 | **JSON** | `.json` | Comprehensive structure with metadata, base64/plain bodies, timestamps, and hashes |
 | **CSV** | `.csv` | Flat tabular spreadsheet for scoping, logging, and triage |
-| **HTML Report** | `.html` | Clean, self-contained interactive report with badges and expandable bodies |
 | **RAW Stream** | `.txt` / `.bin` | Complete wire-format HTTP streams preserving exact HTTP delimiter bytes |
 | **HAR 1.2** | `.har` | Standard HTTP Archive for import into Postman, Insomnia, DevTools, or OWASP ZAP |
-| **Markdown** | `.md` | VAPT-ready audit documentation with summary tables and syntax-highlighted blocks |
 
-### 9. Redaction & Cryptographic Integrity
+### 10. Non-Destructive Redaction & Cryptographic Integrity
 - **Non-Destructive Redaction**: Automatically redacts sensitive fields on **exported copies only**; raw in-memory evidence is never altered:
   - Authorization headers (`Bearer <REDACTED>`, `Basic <REDACTED>`)
   - Cookies (`PHPSESSID`, `JSESSIONID`, `token`, `session`)
@@ -156,173 +174,86 @@ Export single files or complete audit directories:
   - Calculates **SHA-256** checksums of all exported files and individual records.
   - Guarantees chain of custody and artifact integrity for client deliverables.
 
-### 10. Side-by-Side Response Diffing
-Compare any two responses (e.g. Authenticated vs Anonymous, Admin vs User, Baseline vs Tampered):
-- Select 2 rows or click **`Compare (2)`**.
-- Visual indicators for:
-  - Status code mismatches (`200 OK` vs `403 Forbidden`)
-  - Content length / byte size deltas
-  - Added, removed, or modified HTTP headers
-  - Line-by-line body diff highlighting
-  - JSONPath field-level diffs (`$.user.role: "user" -> "admin"`)
-  - Color-coded signals (Green = Added, Red = Removed, Yellow = Modified)
-
-### 11. Multi-Language Exploit & Replay Generators
-Instantly convert captured HTTP transactions into standalone, copy-pasteable replay scripts and PoCs across 5 major execution formats:
-- **cURL**: Single and multi-step bash commands formatted with HTTP method `-X`, custom headers `-H`, payload `--data-raw`, and `-k` (insecure SSL bypass for self-signed certificates). Special characters and single quotes are safely escaped for bash execution.
-- **Python (`requests`)**: Production-ready Python 3 scripts with `urllib3.disable_warnings()`, `verify=False`, session management (`requests.Session()`) for multi-step stateful workflows, and response status/body inspection.
-- **JavaScript (`fetch`)**: Modern asynchronous Fetch API snippets ready to paste directly into browser DevTools console or execute under Node.js runtime.
-- **PowerShell (`Invoke-RestMethod`)**: Native Windows PowerShell snippets utilizing hashtable headers (`$headers = @{...}`), raw body here-strings, and `-SkipCertificateCheck`.
-- **Raw HTTP (RFC 7230)**: Exact wire-format HTTP request blocks with CRLF delimiters ready for netcat (`nc`), Burp Repeater paste, or raw socket testing.
-- **Multi-Step Flow Chaining**: Highlight multiple requests in sequence; RequestVault stitches them into a coherent sequential execution script with step-by-step progress logging.
-
 ---
 
 ## Installation Guide
 
-### Prerequisites
-- **Burp Suite**: Community or Professional (2023.12+ recommended)
-- **Java**: Java 17 or higher (bundled with modern Burp installations)
+### Installing in Burp Suite
 
-### Installing the Extension
-
-1. **Obtain the Extension JAR**:
-   - **Direct Download (Recommended)**: Download the compiled `RequestVault.jar` from [GitHub Releases](https://github.com/Kakaxh1/RequestVault/releases):
-     - [Download RequestVault.jar (v1.0.0)](https://github.com/Kakaxh1/RequestVault/releases/download/v1.0.0/RequestVault.jar)
-   - **Or Build Locally**: Follow the [Building from Source](#building-from-source) instructions below; the output is created at `build/libs/RequestVault.jar`.
+1. **Download the Extension JAR**:
+   - [Download RequestVault.jar (v1.0.0)](https://github.com/Kakaxh1/RequestVault/releases/download/v1.0.0/RequestVault.jar)
 2. **Open Burp Suite**:
-   - Navigate to the **Extensions** tab at the top.
-   - Click on the **Installed** subtab.
+   - Go to the **Extensions** tab -> **Installed** subtab.
 3. **Add Extension**:
-   - Click the **Add** button.
-   - Under **Extension Details**:
-     - **Extension type**: Select `Java`.
-     - **Extension file (.jar)**: Click *Select file...* and choose `RequestVault.jar`.
+   - Click **Add**.
+   - Select **Extension type**: `Java`.
+   - Select **Extension file (.jar)**: choose `RequestVault.jar`.
 4. **Complete Installation**:
-   - Click **Next**.
-   - Ensure the output tab displays:
-     ```
-     [RequestVault] Extension registered successfully!
-     [RequestVault] UI tab initialized.
-     [RequestVault] Context menus registered.
-     ```
-   - Click **Close**.
-5. **Start Using**:
-   - A new **RequestVault** tab is now visible in Burp Suite's main navigation bar.
+   - Click **Next** until installed. A new **RequestVault** tab will appear in Burp Suite's top navigation bar.
+
+### Installing in Caido
+
+1. **Download the Plugin ZIP**:
+   - [Download requestvault-caido.zip (v1.0.0)](https://github.com/Kakaxh1/RequestVault/releases/download/v1.0.0/requestvault-caido.zip)
+2. **Open Caido**:
+   - Click on **Plugins** in the left navigation sidebar.
+3. **Install from File**:
+   - In the top right corner, click **Install from File** (or drag and drop the `.zip` archive).
+   - Select `requestvault-caido.zip`.
+4. **Complete Installation**:
+   - **RequestVault** appears immediately in Caido's navigation sidebar and in right-click context menus.
 
 ---
 
 ## Step-by-Step Usage Workflows
 
-### Scenario 1: Bulk Export Evidence for an Audit Report
-1. In the **RequestVault** tab, verify captured records.
-2. In the **Domain Tree** (left), check your target domain (e.g. `target.example`).
-3. Set **Scope** to `Requests + Responses`.
-4. Check **Exclude static assets** to omit images, fonts, and stylesheets.
-5. In the table, check the boxes of the key vulnerability findings.
-6. Click **`Export Evidence...`**:
-   - Choose destination folder.
-   - Select formats: `HTML Report`, `Markdown`, `JSON`, and `SHA-256 Manifest`.
-   - Check `Apply Redaction (mask tokens, passwords, cookies)`.
-   - Click **Export**.
+### Scenario 1: One-Click cURL Replay from History
+1. In Burp Suite Proxy HTTP History or Caido HTTP History, right-click any request.
+2. Click **`Copy this request as cURL`**.
+3. Paste directly into your terminal:
+   ```bash
+   curl -i -s -k -X POST "https://target.example/api/v1/resource" \
+     -H "Host: target.example" \
+     -H "Authorization: Bearer <TOKEN>" \
+     --data-raw '{"action":"test"}'
+   ```
 
-### Scenario 2: One-Click Markdown Copy for Bug Bounty Reports
-1. Filter by API path: enter `/api/v1/user` in the **API / Path** box.
-2. Click **`Select Matching`** to check all matching rows.
-3. Click **`Copy as... ▼`** -> **`Copy as Markdown`**.
-4. Paste directly into your HackerOne / Bugcrowd report or GitHub issue.
+### Scenario 2: Bulk Export Evidence for an Audit Report
+1. In the **RequestVault** tab, verify captured records.
+2. In the **Domain Tree** (left), check your target domain.
+3. Filter rows using the Path or Status filters.
+4. Check the boxes of the key vulnerability findings.
+5. Click **`Export Evidence...`**:
+   - Choose destination format: `HTML Report`, `Markdown`, `JSON`, `CSV`, or `HAR`.
+   - Check `Apply Redaction (mask tokens, passwords, cookies)`.
+   - Check `Generate SHA-256 Cryptographic Evidence Manifest`.
+   - Click **Export / Download**.
 
 ### Scenario 3: Bypassing Access Control (IDOR / Privilege Escalation Diff)
 1. Send both the low-privilege request and high-privilege request to RequestVault.
 2. Check both records in the table (or highlight both rows).
 3. Click **`Compare (2)`** on the action bar.
-4. RequestVault automatically switches to the **Response Comparison** tab:
-   - Status code differences are flagged in red/green.
-   - Header modifications and body deltas are highlighted side-by-side.
-
----
-
-## Sample Output Previews
-
-### Markdown Export Sample (`export.md`)
-
-````markdown
-# Burp Traffic Export
-
-**Project:** Target Application VAPT  
-**Target:** `https://target.example`  
-**Export Date:** 2026-10-19  
-**Total Requests:** 2  
-
----
-
-## REQUEST NO. 1
-
-**Method:** GET  
-**URL:** `https://target.example/api/profile`  
-**Status:** 200 OK  
-
-### Request 1
-```http
-GET /api/profile HTTP/1.1
-Host: target.example
-Authorization: Bearer <REDACTED>
-Accept: application/json
-```
-
-### Response 1
-```http
-HTTP/1.1 200 OK
-Content-Type: application/json
-
-{
-  "id": 101,
-  "username": "tester",
-  "role": "user"
-}
-```
-````
-
-### Evidence Manifest Sample (`evidence-manifest.json`)
-
-```json
-{
-  "exportTimestamp": "2026-10-19T11:55:00Z",
-  "totalRecords": 2,
-  "redacted": true,
-  "files": [
-    {
-      "fileName": "report.html",
-      "sha256": "4b92c4b8b6c03d15b02f8319f7e8a9324a91929d2b273b40d3989c89495b4109"
-    },
-    {
-      "fileName": "traffic.json",
-      "sha256": "a3b2c1d0e9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f0a9b8c7d6e5f4a3b2"
-    }
-  ]
-}
-```
+4. RequestVault displays the side-by-side comparison:
+   - Status code transition alerts (`200 OK` vs `403 Forbidden`).
+   - Header modifications and body deltas highlighted line-by-line.
 
 ---
 
 ## Right-Click Context Menus
 
-RequestVault embeds natively into Burp Suite's right-click menus:
-
 | Location | Action | What it does |
 | :--- | :--- | :--- |
-| **Proxy HTTP History** | `Send to RequestVault` | Ingests selected request/response pairs into the vault |
-| **Proxy / Logger** | `RequestVault: One-Click Copy (JSON)` | Immediately copies selected transactions as JSON |
-| **Proxy / Logger** | `RequestVault: One-Click Copy (CSV)` | Immediately copies selected transactions as CSV |
-| **Proxy / Logger** | `RequestVault: One-Click Copy (HTML)` | Immediately copies selected transactions as HTML |
-| **Proxy / Logger / Repeater** | `RequestVault: Copy as cURL` | Generates and copies ready-to-run cURL command |
-| **Proxy / Logger / Repeater** | `RequestVault: Copy as Python` | Generates standalone Python `requests` script |
-| **Proxy / Logger / Repeater** | `RequestVault: Copy as JavaScript Fetch` | Generates modern async `fetch` snippet |
-| **Proxy / Logger / Repeater** | `RequestVault: Copy as PowerShell` | Generates PowerShell `Invoke-RestMethod` script |
-| **Proxy / Logger / Repeater** | `RequestVault: Copy as Raw HTTP` | Generates RFC 7230 raw HTTP request stream |
-| **Proxy / Logger** | `RequestVault: Compare 2 Responses` | Directly launches the diff tab with the 2 highlighted messages |
-| **RequestVault Table** | `Copy as JSON / CSV / HTML / Markdown` | Copies table selection to clipboard in requested format |
-| **RequestVault Table** | `Copy Replay Code` -> `cURL / Python / Fetch / PowerShell / Raw HTTP` | Generates standalone replay script for selected rows |
+| **Proxy History / Tables** | `Copy this request as cURL` | Generates and copies ready-to-run cURL command |
+| **Proxy History / Tables** | `Send to RequestVault` | Ingests selected request/response pairs into the vault |
+| **Proxy / Logger** | `RequestVault: Copy as Python` | Generates standalone Python `requests` script |
+| **Proxy / Logger** | `RequestVault: Copy as JavaScript Fetch` | Generates modern async `fetch` snippet |
+| **Proxy / Logger** | `RequestVault: Copy as PowerShell` | Generates PowerShell `Invoke-RestMethod` script |
+| **Proxy / Logger** | `RequestVault: Copy as Raw HTTP` | Generates RFC 7230 raw HTTP request stream |
+| **Proxy / Logger** | `RequestVault: One-Click Copy (JSON/CSV/HTML/MD)` | Copies selected transactions in requested evidence format |
+| **Request Editor Pane** | `Copy this request as cURL` | Copies current editor request as cURL |
+| **Request Editor Pane** | `RequestVault: Copy Replay Code` | Submenu for Python, Fetch, PowerShell, and Raw HTTP |
+| **RequestVault Table** | `Copy this request as cURL` | Directly copies highlighted row as cURL |
+| **RequestVault Table** | `Copy Replay Code` | Multi-language generator for table selections |
 
 ---
 
@@ -334,21 +265,36 @@ git clone https://github.com/Kakaxh1/RequestVault.git
 cd RequestVault
 ```
 
-### Option 1: Windows One-Click Build Script
-Run the automated packaging script from the project root:
+### Building the Burp Suite Extension (Java)
 ```powershell
+# Windows automated build script
 cmd /c build.bat
-```
 
-### Option 2: Gradle
-If you have Gradle installed on your system:
-```bash
+# Or using Gradle
 gradle build
 ```
+Output fat JAR: `build/libs/RequestVault.jar`
 
-The output fat JAR will be generated at:
+### Building the Caido Extension (TypeScript)
+```bash
+cd Caido/RequestVault-Caido
+npm install
+npm run typecheck
+node build.js
 ```
-build/libs/RequestVault.jar
+Output plugin ZIP: `Caido/RequestVault-Caido/dist/requestvault-caido.zip`
+
+### Running Automated Test Suites
+```powershell
+# Burp Suite Java Unit Tests (106 tests)
+javac -cp "lib/*;build/classes" -d build/classes/test src/test/java/requestvault/export/ReplayCodeGeneratorTest.java src/test/java/requestvault/analysis/TrafficFilterAndPresetTest.java src/test/java/requestvault/analysis/ResponseDiffTest.java
+java -cp "build/classes;build/classes/test;lib/*" requestvault.export.ReplayCodeGeneratorTest
+java -cp "build/classes;build/classes/test;lib/*" requestvault.analysis.TrafficFilterAndPresetTest
+java -cp "build/classes;build/classes/test;lib/*" requestvault.analysis.ResponseDiffTest
+
+# Caido Plugin Unit Tests (28 tests)
+cd Caido/RequestVault-Caido
+node test/test.js
 ```
 
 ---

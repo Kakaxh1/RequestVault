@@ -9,25 +9,25 @@ assignees: ''
 **Describe the bug**
 A clear and concise description of what the bug is.
 
-**Burp Suite & Environment Info**
+**Platform & Environment Info**
+- RequestVault Edition: [Burp Suite / Caido]
+- Platform Version: [e.g. Burp Suite Pro 2024.1 / Caido Desktop 0.45]
+- Extension Version: [e.g. 1.0.0]
 - OS: [e.g. Windows 11, macOS Sonoma, Kali Linux]
-- Burp Suite Edition: [e.g. Professional / Community]
-- Burp Suite Version: [e.g. 2024.1.2]
-- Java Version: [e.g. OpenJDK 21.0.1]
-- RequestVault Version: [e.g. 0.1.0]
+- Runtime: [Java 17/21 / Node 20+]
 
 **To Reproduce**
 Steps to reproduce the behavior:
-1. Go to '...'
-2. Capture traffic with '...'
+1. Open RequestVault in '...'
+2. Capture traffic for '...'
 3. Click on '...'
-4. See error
+4. Observe the issue
 
 **Expected behavior**
-A clear and concise description of what you expected to happen.
+A clear description of what was expected to happen.
 
 **Screenshots / Error Logs**
-If applicable, paste output from the Burp Suite Extensions -> RequestVault -> Output/Errors tab.
+If applicable, paste output from the extension console or error tab.
 
 **Additional context**
-Add any other context about the target application traffic (e.g. WebSocket, massive JSON, binary streams).
+Add any other context about the target application traffic (e.g. WebSocket, massive JSON payloads, streaming responses).

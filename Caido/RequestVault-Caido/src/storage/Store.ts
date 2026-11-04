@@ -261,3 +261,4 @@ export class TrafficStore {
     return target.includes(query);
   }
 }
+
