@@ -1,0 +1,18 @@
+{
+  "id": "requestvault-caido",
+  "name": "RequestVault",
+  "version": "1.0.0",
+  "description": "RequestVault for Caido - HTTP traffic collection, multi-language replay script generator (cURL, Python, Fetch, PowerShell, Raw HTTP), response diffing, and forensic VAPT evidence export.",
+  "author": {
+    "name": "Kakaxh1",
+    "url": "https://bhavymorvadiya.netlify.app/"
+  },
+  "plugins": [
+    {
+      "kind": "frontend",
+      "id": "requestvault-caido-frontend",
+      "name": "RequestVault",
+      "entrypoint": "script.js"
+    }
+  ]
+}

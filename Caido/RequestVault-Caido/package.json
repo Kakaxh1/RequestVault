@@ -1,0 +1,27 @@
+{
+  "name": "requestvault-caido",
+  "version": "1.0.0",
+  "description": "RequestVault for Caido - HTTP traffic collection, multi-language exploit & replay code generation, response diffing, and forensic VAPT evidence export.",
+  "main": "dist/script.js",
+  "scripts": {
+    "build": "node build.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "caido",
+    "caido-plugin",
+    "security",
+    "pentesting",
+    "curl",
+    "replay",
+    "vapt",
+    "evidence-export"
+  ],
+  "author": "Kakaxh1",
+  "license": "MIT",
+  "devDependencies": {
+    "@caido/sdk-frontend": "^0.59.0",
+    "esbuild": "^0.20.2",
+    "typescript": "^5.4.5"
+  }
+}
